@@ -1,4 +1,4 @@
-FROM java:openjdk-7u75-jdk
+FROM debian:jessie
 
 RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 514A2AD631A57A16DD0047EC749D6EEC0353B12C
 
