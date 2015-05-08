@@ -17,10 +17,6 @@ RUN sed -ri ' \
 		s/^(rpc_address:).*/\1 0.0.0.0/; \
 	' "$CASSANDRA_CONFIG/cassandra.yaml"
 
-# Necessary since cassandra is trying to override the system limitations
-# See https://groups.google.com/forum/#!msg/docker-dev/8TM_jLGpRKU/dewIQhcs7oAJ
-#RUN rm -f /etc/security/limits.d/cassandra.conf
-
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
