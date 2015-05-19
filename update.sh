@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -eo pipefail
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
@@ -12,8 +12,8 @@ versions=( "${versions[@]%/}" )
 
 for version in "${versions[@]}"; do
 	dist="${version//./}"
-	packagesUrl="www.apache.org/dist/cassandra/debian/dists/${dist}x/main/binary-amd64/Packages.gz"
-	fullVersion="$(curl -sSL "$packagesUrl" | gunzip | grep -m1 -A10 "^Package: cassandra\$" | grep -m1 '^Version: ' | cut -d' ' -f2)"
+	packagesUrl="http://archive.apache.org/dist/cassandra/debian/dists/${dist}x/main/binary-amd64/Packages.gz"
+	fullVersion="$(curl -fsSL "$packagesUrl" | gunzip | grep -m1 -A10 "^Package: cassandra\$" | grep -m1 '^Version: ' | cut -d' ' -f2)"
 	
 	(
 		set -x
