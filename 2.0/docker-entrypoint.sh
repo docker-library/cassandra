@@ -12,44 +12,43 @@ if [ "$1" = 'cassandra' ]; then
 	if [ "$CASSANDRA_LISTEN_ADDRESS" = 'auto' ]; then
 		CASSANDRA_LISTEN_ADDRESS="$(hostname --ip-address)"
 	fi
-	
+
 	: ${CASSANDRA_BROADCAST_ADDRESS="$CASSANDRA_LISTEN_ADDRESS"}
-	
+
 	if [ "$CASSANDRA_BROADCAST_ADDRESS" = 'auto' ]; then
 		CASSANDRA_BROADCAST_ADDRESS="$(hostname --ip-address)"
 	fi
-	
-	sed -ri 's/^(# )?(listen_address:).*/\2 '"$CASSANDRA_LISTEN_ADDRESS"'/' "$CASSANDRA_CONFIG/cassandra.yaml"
-	sed -ri 's/^(# )?(broadcast_address:).*/\2 '"$CASSANDRA_BROADCAST_ADDRESS"'/' "$CASSANDRA_CONFIG/cassandra.yaml"
-	sed -ri 's/^(# )?(broadcast_rpc_address:).*/\2 '"$CASSANDRA_BROADCAST_ADDRESS"'/' "$CASSANDRA_CONFIG/cassandra.yaml"
-	
+	: ${CASSANDRA_BROADCAST_RPC_ADDRESS:=$CASSANDRA_BROADCAST_ADDRESS}
+
 	if [ "$CASSANDRA_SEEDS" ]; then
 		CASSANDRA_SEEDS="$CASSANDRA_SEEDS,$CASSANDRA_BROADCAST_ADDRESS"
 	else
 		CASSANDRA_SEEDS="$CASSANDRA_BROADCAST_ADDRESS"
 	fi
 	sed -ri 's/(- seeds:) "127.0.0.1"/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_CONFIG/cassandra.yaml"
-	
-	if [ "$CASSANDRA_CLUSTER_NAME" ]; then
-		sed -ri 's/^(cluster_name:).*/\1 '"$CASSANDRA_CLUSTER_NAME"'/' "$CASSANDRA_CONFIG/cassandra.yaml"
-	fi
-	
-	if [ "$CASSANDRA_NUM_TOKENS" ]; then
-		sed -ri 's/^(num_tokens:).*/\1 '"$CASSANDRA_NUM_TOKENS"'/' "$CASSANDRA_CONFIG/cassandra.yaml"
-	fi
 
-	if [ "$CASSANDRA_ENDPOINT_SNITCH" ]; then
-		sed -ri 's/^(endpoint_snitch:).*/\1 '"$CASSANDRA_ENDPOINT_SNITCH"'/' "$CASSANDRA_CONFIG/cassandra.yaml"
-	fi
+	for yaml in \
+		broadcast_address \
+		broadcast_rpc_address \
+		cluster_name \
+		endpoint_snitch \
+		listen_address \
+		num_tokens \
+	; do
+		var="CASSANDRA_${yaml^^}"
+		val="${!var}"
+		if [ "$val" ]; then
+			sed -ri 's/^(# )?('"$yaml"':).*/\2 '"$val"'/' "$CASSANDRA_CONFIG/cassandra.yaml"
+		fi
+	done
 
-	if [ "$CASSANDRA_DC" ]; then
-		sed -ri 's/^(dc=).*/\1 '"$CASSANDRA_DC"'/' "$CASSANDRA_CONFIG/cassandra-rackdc.properties"
-	fi
-
-	if [ "$CASSANDRA_RACK" ]; then
-		sed -ri 's/^(rack=).*/\1 '"$CASSANDRA_RACK"'/' "$CASSANDRA_CONFIG/cassandra-rackdc.properties"
-	fi
-
+	for rackdc in dc rack; do
+		var="CASSANDRA_${rackdc^^}"
+		val="${!var}"
+		if [ "$val" ]; then
+			sed -ri 's/^('"$rackdc"'=).*/\1 '"$val"'/' "$CASSANDRA_CONFIG/cassandra-rackdc.properties"
+		fi
+	done
 fi
 
 exec "$@"
