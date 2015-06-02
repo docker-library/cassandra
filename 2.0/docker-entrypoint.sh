@@ -37,6 +37,19 @@ if [ "$1" = 'cassandra' ]; then
 	if [ "$CASSANDRA_NUM_TOKENS" ]; then
 		sed -ri 's/^(num_tokens:).*/\1 '"$CASSANDRA_NUM_TOKENS"'/' "$CASSANDRA_CONFIG/cassandra.yaml"
 	fi
+
+	if [ "$CASSANDRA_ENDPOINT_SNITCH" ]; then
+		sed -ri 's/^(endpoint_snitch:).*/\1 '"$CASSANDRA_ENDPOINT_SNITCH"'/' "$CASSANDRA_CONFIG/cassandra.yaml"
+	fi
+
+	if [ "$CASSANDRA_DC" ]; then
+		sed -ri 's/^(dc=).*/\1 '"$CASSANDRA_DC"'/' "$CASSANDRA_CONFIG/cassandra-rackdc.properties"
+	fi
+
+	if [ "$CASSANDRA_RACK" ]; then
+		sed -ri 's/^(rack=).*/\1 '"$CASSANDRA_RACK"'/' "$CASSANDRA_CONFIG/cassandra-rackdc.properties"
+	fi
+
 fi
 
 exec "$@"
