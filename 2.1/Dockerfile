@@ -20,7 +20,7 @@ RUN sed -ri ' \
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
-VOLUME /var/lib/cassandra/data
+VOLUME /var/lib/cassandra
 
 # 7000: intra-node communication
 # 7001: TLS intra-node communication
