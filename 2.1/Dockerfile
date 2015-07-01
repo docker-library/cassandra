@@ -4,7 +4,7 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 514A2AD631A57
 
 RUN echo 'deb http://www.apache.org/dist/cassandra/debian 21x main' >> /etc/apt/sources.list.d/cassandra.list
 
-ENV CASSANDRA_VERSION 2.1.6
+ENV CASSANDRA_VERSION 2.1.7
 
 RUN apt-get update \
 	&& apt-get install -y cassandra="$CASSANDRA_VERSION" \
@@ -20,7 +20,7 @@ RUN sed -ri ' \
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
-VOLUME /var/lib/cassandra/data
+VOLUME /var/lib/cassandra
 
 # 7000: intra-node communication
 # 7001: TLS intra-node communication
