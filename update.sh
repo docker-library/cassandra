@@ -10,6 +10,7 @@ fi
 versions=( "${versions[@]%/}" )
 
 
+travisEnv=
 for version in "${versions[@]}"; do
 	dist="${version//./}"
 	packagesUrl="http://www.apache.org/dist/cassandra/debian/dists/${dist}x/main/binary-amd64/Packages.gz"
@@ -21,5 +22,9 @@ for version in "${versions[@]}"; do
 		mv "$version/Dockerfile.template" "$version/Dockerfile"
 		sed -i 's/%%CASSANDRA_DIST%%/'$dist'/g; s/%%CASSANDRA_VERSION%%/'$fullVersion'/g' "$version/Dockerfile"
 	)
+	
+	travisEnv='\n  - VERSION='"$version$travisEnv"
 done
 
+travis="$(awk -v 'RS=\n\n' '$1 == "env:" { $0 = "env:'"$travisEnv"'" } { printf "%s%s", $0, RS }' .travis.yml)"
+echo "$travis" > .travis.yml
