@@ -24,18 +24,12 @@ if [ "$1" = 'cassandra' ]; then
 		: ${CASSANDRA_SEEDS:="cassandra"}
 	fi
 	: ${CASSANDRA_SEEDS:="$CASSANDRA_BROADCAST_ADDRESS"}
-	
+
 	sed -ri 's/(- seeds:) "127.0.0.1"/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_CONFIG/cassandra.yaml"
 
-	for yaml in \
-		broadcast_address \
-		broadcast_rpc_address \
-		cluster_name \
-		endpoint_snitch \
-		listen_address \
-		num_tokens \
-	; do
-		var="CASSANDRA_${yaml^^}"
+	for var in $(( set -o posix; set ) | grep -v CASSANDRA_CONFIG | grep "^CASSANDRA_" | sed 's/=.*$//')
+	do
+		yaml=$(echo $var | sed -E 's/^CASSANDRA_([A-Z0-9_]+)$/\L\1/')
 		val="${!var}"
 		if [ "$val" ]; then
 			sed -ri 's/^(# )?('"$yaml"':).*/\2 '"$val"'/' "$CASSANDRA_CONFIG/cassandra.yaml"
