@@ -18,9 +18,8 @@ for version in "${versions[@]}"; do
 	
 	(
 		set -x
-		cp docker-entrypoint.sh Dockerfile.template "$version/"
-		mv "$version/Dockerfile.template" "$version/Dockerfile"
-		sed -i 's/%%CASSANDRA_DIST%%/'$dist'/g; s/%%CASSANDRA_VERSION%%/'$fullVersion'/g' "$version/Dockerfile"
+		cp docker-entrypoint.sh "$version/"
+		sed 's/%%CASSANDRA_DIST%%/'$dist'/g; s/%%CASSANDRA_VERSION%%/'$fullVersion'/g' Dockerfile.template > "$version/Dockerfile"
 	)
 	
 	travisEnv='\n  - VERSION='"$version$travisEnv"
