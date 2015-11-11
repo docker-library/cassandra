@@ -4,9 +4,9 @@ language: bash
 sudo: 9000
 
 env:
+  - VERSION=3.0
   - VERSION=2.2
   - VERSION=2.1
-  - VERSION=2.0
 
 install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
