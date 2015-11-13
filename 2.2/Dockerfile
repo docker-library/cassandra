@@ -12,11 +12,6 @@ RUN apt-get update \
 
 ENV CASSANDRA_CONFIG /etc/cassandra
 
-# listen to all rpc
-RUN sed -ri ' \
-		s/^(rpc_address:).*/\1 0.0.0.0/; \
-	' "$CASSANDRA_CONFIG/cassandra.yaml"
-
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 

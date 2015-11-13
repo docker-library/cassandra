@@ -7,7 +7,8 @@ if [ "${1:0:1}" = '-' ]; then
 fi
 
 if [ "$1" = 'cassandra' ]; then
-	# TODO detect if this is a restart if necessary
+	: ${CASSANDRA_RPC_ADDRESS='0.0.0.0'}
+
 	: ${CASSANDRA_LISTEN_ADDRESS='auto'}
 	if [ "$CASSANDRA_LISTEN_ADDRESS" = 'auto' ]; then
 		CASSANDRA_LISTEN_ADDRESS="$(hostname --ip-address)"
@@ -34,6 +35,8 @@ if [ "$1" = 'cassandra' ]; then
 		endpoint_snitch \
 		listen_address \
 		num_tokens \
+		rpc_address \
+		start_rpc \
 	; do
 		var="CASSANDRA_${yaml^^}"
 		val="${!var}"
