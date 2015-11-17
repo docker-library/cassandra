@@ -25,8 +25,12 @@ if [ "$1" = 'cassandra' ]; then
 		: ${CASSANDRA_SEEDS:="cassandra"}
 	fi
 	: ${CASSANDRA_SEEDS:="$CASSANDRA_BROADCAST_ADDRESS"}
-	
-	sed -ri 's/(- seeds:) "127.0.0.1"/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_CONFIG/cassandra.yaml"
+
+	if [ -n "${CASSANDRA_SEED_PROVIDER}" ]; then
+		sed -ri 's/(- class_name:) org.apache.cassandra.locator.SimpleSeedProvider/\1 '"$CASSANDRA_SEED_PROVIDER"'/' "$CASSANDRA_CONFIG/cassandra.yaml"
+	else
+		sed -ri 's/(- seeds:) "127.0.0.1"/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_CONFIG/cassandra.yaml"
+	fi
 
 	for yaml in \
 		broadcast_address \
