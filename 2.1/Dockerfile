@@ -7,7 +7,7 @@ RUN echo 'deb http://www.apache.org/dist/cassandra/debian 21x main' >> /etc/apt/
 ENV CASSANDRA_VERSION 2.1.11
 
 RUN apt-get update \
-	&& apt-get install -y cassandra="$CASSANDRA_VERSION" \
+	&& apt-get install -y curl cassandra="$CASSANDRA_VERSION" \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV CASSANDRA_CONFIG /etc/cassandra
