@@ -18,7 +18,7 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 514A2AD631A57
 
 RUN echo 'deb http://www.apache.org/dist/cassandra/debian 30x main' >> /etc/apt/sources.list.d/cassandra.list
 
-ENV CASSANDRA_VERSION 3.0.2
+ENV CASSANDRA_VERSION 3.0.3
 
 RUN apt-get update \
 	&& apt-get install -y cassandra="$CASSANDRA_VERSION" \
