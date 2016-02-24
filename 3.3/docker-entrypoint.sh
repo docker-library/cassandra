@@ -34,21 +34,18 @@ if [ "$1" = 'cassandra' ]; then
 	
 	sed -ri 's/(- seeds:) "127.0.0.1"/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_CONFIG/cassandra.yaml"
 
-	for yaml in \
-		broadcast_address \
-		broadcast_rpc_address \
-		cluster_name \
-		endpoint_snitch \
-		listen_address \
-		num_tokens \
-		rpc_address \
-		start_rpc \
-	; do
-		var="CASSANDRA_${yaml^^}"
-		val="${!var}"
-		if [ "$val" ]; then
-			sed -ri 's/^(# )?('"$yaml"':).*/\2 '"$val"'/' "$CASSANDRA_CONFIG/cassandra.yaml"
-		fi
+	for VAR in `env`
+	do
+	  if [[ $VAR =~ ^CASSANDRA_ && ! ($VAR =~ ^CASSANDRA_VERSION || $VAR =~ ^CASSANDRA_CONFIG || $VAR =~ ^CASSANDRA_SEEDS || $VAR =~ ^CASSANDRA_DC || $VAR =~ ^CASSANDRA_RACK) ]]; then
+	    var_name=`echo "$VAR" | sed -r "s/CASSANDRA_(.*)=.*/\1/g" | tr '[:upper:]' '[:lower:]'`
+	    env_var=`echo "$VAR" | sed -r "s/(.*)=.*/\1/g"`
+	    if egrep -q "(^|^#)$var_name: " $CASSANDRA_CONFIG/cassandra.yaml; then
+	        sed -r -i "s@(^|^#)($var_name): (.*)@\2: ${!env_var}@g" $CASSANDRA_CONFIG/cassandra.yaml #note that no config values may contain an '@' char
+	    else
+                # Append to bottom of file
+	        echo "$var_name: ${!env_var}" >> $CASSANDRA_CONFIG/cassandra.yaml
+	    fi
+	  fi
 	done
 
 	for rackdc in dc rack; do
