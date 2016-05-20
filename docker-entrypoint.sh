@@ -31,7 +31,7 @@ if [ "$1" = 'cassandra' ]; then
 		: ${CASSANDRA_SEEDS:="cassandra"}
 	fi
 	: ${CASSANDRA_SEEDS:="$CASSANDRA_BROADCAST_ADDRESS"}
-	
+
 	sed -ri 's/(- seeds:) "127.0.0.1"/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_CONFIG/cassandra.yaml"
 
 	for yaml in \
@@ -43,6 +43,8 @@ if [ "$1" = 'cassandra' ]; then
 		num_tokens \
 		rpc_address \
 		start_rpc \
+		authenticator \
+		authorizer \
 	; do
 		var="CASSANDRA_${yaml^^}"
 		val="${!var}"
