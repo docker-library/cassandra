@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+# first, create a clean cassandra.yaml
+cp "$CASSANDRA_CONFIG/cassandra.yaml.orig" "$CASSANDRA_CONFIG/cassandra.yaml"
 # first arg is `-f` or `--some-option`
 if [ "${1:0:1}" = '-' ]; then
 	set -- cassandra -f "$@"
