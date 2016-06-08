@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -eu
 
 declare -A aliases
 aliases=(
@@ -7,25 +7,64 @@ aliases=(
 	[3.5]='3 latest'
 )
 
+self="$(basename "$BASH_SOURCE")"
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
 versions=( */ )
 versions=( "${versions[@]%/}" )
-url='git://github.com/docker-library/cassandra'
 
-echo '# maintainer: InfoSiftr <github@infosiftr.com> (@infosiftr)'
+# get the most recent commit which modified any of "$@"
+fileCommit() {
+	git log -1 --format='format:%H' HEAD -- "$@"
+}
+
+# get the most recent commit which modified "$1/Dockerfile" or any file COPY'd from "$1/Dockerfile"
+dirCommit() {
+	local dir="$1"; shift
+	(
+		cd "$dir"
+		fileCommit \
+			Dockerfile \
+			$(git show HEAD:./Dockerfile | awk '
+				toupper($1) == "COPY" {
+					for (i = 2; i < NF; i++) {
+						print $i
+					}
+				}
+			')
+	)
+}
+
+cat <<-EOH
+# this file is generated via https://github.com/docker-library/cassandra/blob/$(fileCommit "$self")/$self
+
+Maintainers: Tianon Gravi <admwiggin@gmail.com> (@tianon),
+             Joseph Ferguson <yosifkit@gmail.com> (@yosifkit)
+GitRepo: https://github.com/docker-library/cassandra.git
+EOH
+
+# prints "$2$1$3$1...$N"
+join() {
+	local sep="$1"; shift
+	local out; printf -v out "${sep//%/%%}%s" "$@"
+	echo "${out#$sep}"
+}
 
 for version in "${versions[@]}"; do
-	commit="$(cd "$version" && git log -1 --format='format:%H' -- Dockerfile $(awk 'toupper($1) == "COPY" { for (i = 2; i < NF; i++) { print $i } }' Dockerfile))"
-	fullVersion="$(grep -m1 'ENV CASSANDRA_VERSION ' "$version/Dockerfile" | cut -d' ' -f3 | cut -d- -f1)"
+	commit="$(dirCommit "$version")"
+
+	fullVersion="$(git show "$commit":"$version/Dockerfile" | awk '$1 == "ENV" && $2 == "CASSANDRA_VERSION" { print $3; exit }')"
+
 	versionAliases=( $fullVersion )
 	if [ "$version" != "$fullVersion" ]; then
 		versionAliases+=( $version )
 	fi
-	versionAliases+=( ${aliases[$version]} )
-	
+	versionAliases+=( ${aliases[$version]:-} )
+
 	echo
-	for va in "${versionAliases[@]}"; do
-		echo "$va: ${url}@${commit} $version"
-	done
+	cat <<-EOE
+		Tags: $(join ', ' "${versionAliases[@]}")
+		GitCommit: $commit
+		Directory: $version
+	EOE
 done
