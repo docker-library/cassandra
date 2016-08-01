@@ -13,6 +13,9 @@ if [ "$1" = 'cassandra' -a "$(id -u)" = '0' ]; then
 fi
 
 if [ "$1" = 'cassandra' ]; then
+
+  sleep $[ ( $RANDOM % 20 ) + 1]
+
 	: ${CASSANDRA_RPC_ADDRESS='0.0.0.0'}
   : ${HOST_COMMAND='hostname --ip-address'}
   : ${CASSANDRA_LISTEN_ADDRESS_COMMAND=$HOST_COMMAND}
@@ -23,7 +26,7 @@ if [ "$1" = 'cassandra' ]; then
 	fi
 
 	: ${CASSANDRA_BROADCAST_ADDRESS="$CASSANDRA_LISTEN_ADDRESS"}
-  : ${CASSANDRA_BROADCAST_ADDRESS_COMMAND=HOST_COMMAND}
+  : ${CASSANDRA_BROADCAST_ADDRESS_COMMAND=$HOST_COMMAND}
 
 	if [ "$CASSANDRA_BROADCAST_ADDRESS" = 'auto' ]; then
 		CASSANDRA_BROADCAST_ADDRESS=$(eval $CASSANDRA_BROADCAST_ADDRESS_COMMAND)
