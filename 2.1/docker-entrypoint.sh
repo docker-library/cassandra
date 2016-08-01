@@ -35,9 +35,12 @@ if [ "$1" = 'cassandra' ]; then
 	: ${CASSANDRA_BROADCAST_RPC_ADDRESS:=$CASSANDRA_BROADCAST_ADDRESS}
 
 	if [ -n "${CASSANDRA_NAME:+1}" ]; then
-		: ${CASSANDRA_SEEDS:=$(eval $SEEDS_COMMNAD)}
+		: ${CASSANDRA_SEEDS:="cassandra"}
 	fi
-	: ${CASSANDRA_SEEDS:="$CASSANDRA_BROADCAST_ADDRESS"}
+
+  if [ "$CASSANDRA_SEEDS" = 'auto' ]; then
+	  CASSANDRA_SEEDS=$(eval $SEEDS_COMMNAD)
+	fi
 	
 	sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_CONFIG/cassandra.yaml"
 
