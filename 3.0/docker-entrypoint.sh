@@ -14,7 +14,7 @@ fi
 
 if [ "$1" = 'cassandra' ]; then
 	: ${CASSANDRA_RPC_ADDRESS='0.0.0.0'}
-  : ${HOST_COMMAND='$(hostname --ip-address)'}
+  : ${HOST_COMMAND='hostname --ip-address'}
   : ${CASSANDRA_LISTEN_ADDRESS_COMMAND=$HOST_COMMAND}
 
 	: ${CASSANDRA_LISTEN_ADDRESS='auto'}
