@@ -14,16 +14,19 @@ fi
 
 if [ "$1" = 'cassandra' ]; then
 	: ${CASSANDRA_RPC_ADDRESS='0.0.0.0'}
+  : ${HOST_COMMAND='$(hostname --ip-address)'}
+  : ${CASSANDRA_LISTEN_ADDRESS_COMMAND=$HOST_COMMAND}
 
 	: ${CASSANDRA_LISTEN_ADDRESS='auto'}
 	if [ "$CASSANDRA_LISTEN_ADDRESS" = 'auto' ]; then
-		CASSANDRA_LISTEN_ADDRESS="$(hostname --ip-address)"
+		CASSANDRA_LISTEN_ADDRESS=$(eval $CASSANDRA_LISTEN_ADDRESS_COMMAND)
 	fi
 
 	: ${CASSANDRA_BROADCAST_ADDRESS="$CASSANDRA_LISTEN_ADDRESS"}
+  : ${CASSANDRA_BROADCAST_ADDRESS_COMMAND=HOST_COMMAND}
 
 	if [ "$CASSANDRA_BROADCAST_ADDRESS" = 'auto' ]; then
-		CASSANDRA_BROADCAST_ADDRESS="$(hostname --ip-address)"
+		CASSANDRA_BROADCAST_ADDRESS=$(eval $CASSANDRA_BROADCAST_ADDRESS_COMMAND)
 	fi
 	: ${CASSANDRA_BROADCAST_RPC_ADDRESS:=$CASSANDRA_BROADCAST_ADDRESS}
 
@@ -40,6 +43,7 @@ if [ "$1" = 'cassandra' ]; then
 		cluster_name \
 		endpoint_snitch \
 		listen_address \
+    listen_interface \
 		num_tokens \
 		rpc_address \
 		start_rpc \
