@@ -1,11 +1,11 @@
 # Networking
-In docker 1.12 swarm mode was introduced. This enables automatic schedueling of containers as instances join or leave the swarm network. However this new mode intriduces a new overlay network to the container called ingress, which may result in differeing output of the `hostname -i` command. Therefor finer controll of the advertised network is nessesary.
+In docker 1.12 swarm mode was introduced. This enables automatic scheduling of containers as instances join or leave the swarm network. However this new mode introduces a new overlay network to the container called ingress, which may result in differing output of the `hostname -i` command. Therefor finer control of the advertised network is necessary.
 
-For cassandra to work we need to spesify the listenning address and the broadcast address.
+For cassandra to work we need to specify the listening address and the broadcast address.
 
 ## Cassandra Listen Address
 
-You can configure the adresses cassandra listens on in 3 different ways
+You can configure the addresses cassandra listens on in 3 different ways
 
 - explicitly, using `CASSANDRA_LISTEN_ADDRESS`
 - Setting the global `HOSTNAME_COMMAND` and `CASSANDRA_LISTEN_ADDRESS` set to `auto`,
@@ -15,7 +15,7 @@ You can configure the adresses cassandra listens on in 3 different ways
 
 When using commands, make sure you review the "Variable Substitution" section in https://docs.docker.com/compose/compose-file/
 
-If KAFKA_ADVERTISED_HOST_NAME is specified, it takes presendence over HOSTNAME_COMMAND
+If KAFKA_ADVERTISED_HOST_NAME is specified, it takes precedence over HOSTNAME_COMMAND
 
 ## Cassandra Broadcast Address
 
@@ -36,7 +36,7 @@ all ip addresses for the container:
 
 `HOSTNAME_COMMAND=hostname -i`
 ### interface
-to get the IP of a spesific interface `eth2` in this case:
+to get the IP of a specific interface `eth2` in this case:
 
 `HOSTNAME_COMMAND=ip r | awk '{ ip[$3] = $NF } END { print ( "eth2" in ip ? ip["eth2"] : ip["eth0"] ) }'`
 
