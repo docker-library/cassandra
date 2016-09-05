@@ -36,6 +36,8 @@ ENV CASSANDRA_CONFIG /etc/cassandra
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
+HEALTHCHECK --interval=3s --timeout=1s CMD cqlsh -e "use system"
+
 RUN mkdir -p /var/lib/cassandra "$CASSANDRA_CONFIG" \
 	&& chown -R cassandra:cassandra /var/lib/cassandra "$CASSANDRA_CONFIG" \
 	&& chmod 777 /var/lib/cassandra "$CASSANDRA_CONFIG"
