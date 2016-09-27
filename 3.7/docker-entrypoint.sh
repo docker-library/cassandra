@@ -43,6 +43,10 @@ if [ "$1" = 'cassandra' ]; then
 		num_tokens \
 		rpc_address \
 		start_rpc \
+		storage_port \
+		ssl_storage_port \
+		native_transport_port \
+		rpc_port \
 	; do
 		var="CASSANDRA_${yaml^^}"
 		val="${!var}"
