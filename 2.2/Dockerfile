@@ -18,11 +18,20 @@ RUN set -x \
 	&& gosu nobody true \
 	&& apt-get purge -y --auto-remove ca-certificates wget
 
-RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 514A2AD631A57A16DD0047EC749D6EEC0353B12C
+# https://wiki.apache.org/cassandra/DebianPackaging#Adding_Repository_Keys
+ENV GPG_KEYS \
+# gpg: key 0353B12C: public key "T Jake Luciani <jake@apache.org>" imported
+	514A2AD631A57A16DD0047EC749D6EEC0353B12C \
+# gpg: key FE4B2BDA: public key "Michael Shuler <michael@pbandjelly.org>" imported
+	A26E528B271F19B9E5D8E19EA278B781FE4B2BDA
+RUN set -ex \
+	&& for key in $GPG_KEYS; do \
+		apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
+	done
 
 RUN echo 'deb http://www.apache.org/dist/cassandra/debian 22x main' >> /etc/apt/sources.list.d/cassandra.list
 
-ENV CASSANDRA_VERSION 2.2.7
+ENV CASSANDRA_VERSION 2.2.8
 
 RUN apt-get update \
 	&& apt-get install -y cassandra="$CASSANDRA_VERSION" \
