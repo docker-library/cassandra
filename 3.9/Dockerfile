@@ -29,9 +29,9 @@ RUN set -ex \
 		apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
 	done
 
-RUN echo 'deb http://www.apache.org/dist/cassandra/debian 37x main' >> /etc/apt/sources.list.d/cassandra.list
+RUN echo 'deb http://www.apache.org/dist/cassandra/debian 39x main' >> /etc/apt/sources.list.d/cassandra.list
 
-ENV CASSANDRA_VERSION 3.7
+ENV CASSANDRA_VERSION 3.9
 
 RUN apt-get update \
 	&& apt-get install -y cassandra="$CASSANDRA_VERSION" \
