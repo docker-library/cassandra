@@ -34,7 +34,7 @@ RUN echo 'deb http://www.apache.org/dist/cassandra/debian 39x main' >> /etc/apt/
 ENV CASSANDRA_VERSION 3.9
 
 RUN apt-get update \
-	&& apt-get install -y cassandra="$CASSANDRA_VERSION" \
+	&& apt-get install -y cassandra="$CASSANDRA_VERSION" libjemalloc1 \
 	&& rm -rf /var/lib/apt/lists/*
 
 # https://issues.apache.org/jira/browse/CASSANDRA-11661
