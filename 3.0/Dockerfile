@@ -27,10 +27,14 @@ ENV GPG_KEYS \
 	514A2AD631A57A16DD0047EC749D6EEC0353B12C \
 # gpg: key FE4B2BDA: public key "Michael Shuler <michael@pbandjelly.org>" imported
 	A26E528B271F19B9E5D8E19EA278B781FE4B2BDA
-RUN set -ex \
-	&& for key in $GPG_KEYS; do \
-		apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
-	done
+RUN set -ex; \
+	export GNUPGHOME="$(mktemp -d)"; \
+	for key in $GPG_KEYS; do \
+		gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
+	done; \
+	gpg --export $GPG_KEYS > /etc/apt/trusted.gpg.d/cassandra.gpg; \
+	rm -r "$GNUPGHOME"; \
+	apt-key list
 
 RUN echo 'deb http://www.apache.org/dist/cassandra/debian 30x main' >> /etc/apt/sources.list.d/cassandra.list
 
