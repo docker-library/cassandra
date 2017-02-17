@@ -21,6 +21,13 @@ RUN set -x \
 # solves warning: "jemalloc shared library could not be preloaded to speed up memory allocations"
 RUN apt-get update && apt-get install -y --no-install-recommends libjemalloc1 && rm -rf /var/lib/apt/lists/*
 
+# https://github.com/docker-library/cassandra/pull/98#issuecomment-280761137
+RUN { \
+		echo 'Package: openjdk-* ca-certificates-java'; \
+		echo 'Pin: release n=*-backports'; \
+		echo 'Pin-Priority: 990'; \
+	} > /etc/apt/preferences.d/java-backports
+
 # https://wiki.apache.org/cassandra/DebianPackaging#Adding_Repository_Keys
 ENV GPG_KEYS \
 # gpg: key 0353B12C: public key "T Jake Luciani <jake@apache.org>" imported
