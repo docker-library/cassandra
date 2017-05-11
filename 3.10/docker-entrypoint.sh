@@ -60,4 +60,12 @@ if [ "$1" = 'cassandra' ]; then
 	done
 fi
 
+for f in docker-entrypoint-initdb.d/*; do
+	case "$f" in
+		*.cql) echo "$0: running $f" && until cqlsh -f "$f"; do >&2 echo "Cassandra is unavailable - sleeping"; sleep 3; done & ;;
+    		*) echo "$0: ignoring $f" ;;
+  	esac
+  	echo
+done
+
 exec "$@"
