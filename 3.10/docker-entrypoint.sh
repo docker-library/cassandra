@@ -32,12 +32,19 @@ if [ "$1" = 'cassandra' ]; then
 	fi
 	: ${CASSANDRA_SEEDS:="$CASSANDRA_BROADCAST_ADDRESS"}
 	
+	if [ -n "$CASSANDRA_ENABLE_USER_DEFINED_FUNCTIONS" ]; then
+    		CASSANDRA_ENABLE_USER_DEFINED_FUNCTIONS="true"
+	else
+    		CASSANDRA_ENABLE_USER_DEFINED_FUNCTIONS="false"
+	fi
+	
 	sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_CONFIG/cassandra.yaml"
 
 	for yaml in \
 		broadcast_address \
 		broadcast_rpc_address \
 		cluster_name \
+		enable_user_defined_functions \
 		endpoint_snitch \
 		listen_address \
 		num_tokens \
