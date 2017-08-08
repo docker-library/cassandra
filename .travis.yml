@@ -2,7 +2,9 @@ language: bash
 services: docker
 
 env:
-  - VERSION=3.7
+  - VERSION=3.9
+  - VERSION=3.11
+  - VERSION=3.10
   - VERSION=3.0
   - VERSION=2.2
   - VERSION=2.1
@@ -16,7 +18,7 @@ before_script:
   - image="cassandra:$VERSION"
 
 script:
-  - docker build -t "$image" .
+  - travis_retry docker build -t "$image" .
   - ~/official-images/test/run.sh "$image"
 
 after_script:
