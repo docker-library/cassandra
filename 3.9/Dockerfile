@@ -3,7 +3,7 @@ FROM debian:jessie-backports
 
 # explicitly set user/group IDs
 RUN groupadd -r cassandra --gid=999 && useradd -r -g cassandra --uid=999 cassandra
-
+	
 # grab gosu for easy step-down from root
 ENV GOSU_VERSION 1.7
 RUN set -x \
@@ -11,7 +11,9 @@ RUN set -x \
 	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
 	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
-	&& gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+	&& key=B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" \
+	|| gpg --keyserver pgp.mit.edu --recv-keys "$key" \
 	&& gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
 	&& rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
 	&& chmod +x /usr/local/bin/gosu \
@@ -34,10 +36,14 @@ ENV GPG_KEYS \
 	514A2AD631A57A16DD0047EC749D6EEC0353B12C \
 # gpg: key FE4B2BDA: public key "Michael Shuler <michael@pbandjelly.org>" imported
 	A26E528B271F19B9E5D8E19EA278B781FE4B2BDA
+# gpg: key BF357DD4: "Tianon Gravi <tianon@tianon.xyz>" imported
+# B42F6819007F00F88E364FD4036A9C25BF357DD4
+
 RUN set -ex; \
 	export GNUPGHOME="$(mktemp -d)"; \
 	for key in $GPG_KEYS; do \
-		gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key"; \
+		gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" || \
+		gpg --keyserver pgp.mit.edu --recv-keys "$key"; \
 	done; \
 	gpg --export $GPG_KEYS > /etc/apt/trusted.gpg.d/cassandra.gpg; \
 	rm -r "$GNUPGHOME"; \
