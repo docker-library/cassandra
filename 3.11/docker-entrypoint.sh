@@ -16,10 +16,15 @@ if [ "$1" = 'cassandra' ]; then
 
   sleep $[ ( $RANDOM % 10 ) + 1]
 
+  echo 'LAUNCH NODETOOL REPAIR IN BACKGROUND,
+SCRIPT WILL WAIT FOR CASSANDRA TO BE FULLY BOOTED'
+  nohup sh etc/cassandra/node-repair-after-full-boot.sh > /dev/stdout 2>&1 &
+
   : ${CASSANDRA_RPC_ADDRESS='0.0.0.0'}
   : ${HOST_COMMAND='hostname --ip-address'}
 
-  : ${SEEDS_COMMAND="echo \$CASSANDRA_BROADCAST_ADDRESS"}
+  : ${SERVICE_NAME='cassadra'}
+  : ${SEEDS_COMMAND='echo $CASSANDRA_BROADCAST_ADDRESS'}
 
   # Listen Address
   : ${CASSANDRA_LISTEN_ADDRESS_COMMAND=$HOST_COMMAND}
@@ -43,8 +48,16 @@ if [ "$1" = 'cassandra' ]; then
   fi
 
   if [ "$CASSANDRA_SEEDS" = 'auto' ]; then
-    echo "evaluating cassandra seeds with $SEEDS_COMMAND"
-    CASSANDRA_SEEDS=$(eval $SEEDS_COMMAND)
+    tasks=`getent hosts tasks.cassandra | awk '{print $1}'`
+    Ntasks=`echo "$tasks" | wc -l`
+    seeds=`echo "$tasks" | sed "/$CASSANDRA_BROADCAST_ADDRESS/d" | paste -d, -s -`;
+    echo "found seeds $seeds"
+
+    CASSANDRA_SEEDS=$(printf "%s" $( [ ${Ntasks} -gt 1 ] && echo ${seeds} || echo    "$CASSANDRA_BROADCAST_ADDRESS" ))
+
+    echo "cassandra_seeds set as $CASSANDRA_SEEDS"
+
+    # CASSANDRA_SEEDS=$(eval $SEEDS_COMMAND)
   fi
   
   sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_CONFIG/cassandra.yaml"
