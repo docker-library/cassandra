@@ -48,7 +48,7 @@ SCRIPT WILL WAIT FOR CASSANDRA TO BE FULLY BOOTED'
   fi
 
   if [ "$CASSANDRA_SEEDS" = 'auto' ]; then
-    tasks=`getent hosts tasks.cassandra | awk '{print $1}'`
+    tasks=`getent hosts tasks.$SERVICE_NAME | awk '{print $1}'`
     Ntasks=`echo "$tasks" | wc -l`
     seeds=`echo "$tasks" | sed "/$CASSANDRA_BROADCAST_ADDRESS/d" | paste -d, -s -`;
     echo "found seeds $seeds"
