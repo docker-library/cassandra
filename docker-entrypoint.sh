@@ -8,7 +8,10 @@ fi
 
 # allow the container to be started with `--user`
 if [ "$1" = 'cassandra' -a "$(id -u)" = '0' ]; then
-  chown -R cassandra /var/lib/cassandra /var/log/cassandra "$CASSANDRA_CONFIG"
+  chown -R cassandra /var/lib/cassandra \
+                     /var/log/cassandra \
+                     /home/cassandra \
+                     "$CASSANDRA_CONFIG"
   exec gosu cassandra "$BASH_SOURCE" "$@"
 fi
 
@@ -18,12 +21,12 @@ if [ "$1" = 'cassandra' ]; then
 
   echo 'LAUNCH NODETOOL REPAIR IN BACKGROUND,
 SCRIPT WILL WAIT FOR CASSANDRA TO BE FULLY BOOTED'
-  nohup sh etc/cassandra/node-repair-after-full-boot.sh > /dev/stdout 2>&1 &
+  nohup sh node-repair-after-full-boot.sh & # > /dev/stdout 2>&1 &
 
   : ${CASSANDRA_RPC_ADDRESS='0.0.0.0'}
   : ${HOST_COMMAND='hostname --ip-address'}
 
-  : ${SERVICE_NAME='cassadra'}
+  : ${SERVICE_NAME='cassandra'}
   : ${SEEDS_COMMAND='echo $CASSANDRA_BROADCAST_ADDRESS'}
 
   # Listen Address

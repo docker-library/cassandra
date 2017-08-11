@@ -16,6 +16,7 @@ for version in "${versions[@]}"; do
 		set -x
 		cp docker-entrypoint.sh "$version/"
 		cp replace_node_patch.sh "$version/"
+		cp node-repair-after-full-boot.sh "$version/"
 		sed 's/%%CASSANDRA_VERSION%%/'$version'/g' Dockerfile.template > "$version/Dockerfile"
 	)
 done

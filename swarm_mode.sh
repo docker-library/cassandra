@@ -1,7 +1,7 @@
 #!/bin/bash
-docker service create -d \
+docker service create \
   --name cassandra \
-  --network mercury \
+  --network mynetwork \
   -e HEAP_NEWSIZE=12M \
   -e MAX_HEAP_SIZE=64M \
   webscam/cassandra:swarm_test

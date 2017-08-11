@@ -15,7 +15,7 @@ You can configure the addresses cassandra listens on in 3 different ways
 
 When using commands, make sure you review the "Variable Substitution" section in https://docs.docker.com/compose/compose-file/
 
-If KAFKA_ADVERTISED_HOST_NAME is specified, it takes precedence over HOSTNAME_COMMAND
+If CASSANDRA_ADVERTISED_HOST_NAME is specified, it takes precedence over HOSTNAME_COMMAND
 
 ## Cassandra Broadcast Address
 

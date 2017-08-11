@@ -1,11 +1,11 @@
-
 # Deal with containers scaling down and up,
 # when they will scale up with the same IP as before,
 # they will exit with an error because they need --replace-address while booting to take back their seat inside the cluster
 seeds=$(echo $CASSANDRA_SEEDS | tr "," "\n")
 
-for seed in $seeds
-do
+# dont replace_address if node allready bootstraped
+if [ ! -d "/var/lib/cassandra/commitlog" ]; then
+  for seed in $seeds; do
     echo "Trying to reach $seed"
 
     ping -c 1 $seed >/dev/null 2>/dev/null
@@ -43,6 +43,8 @@ do
     else
         echo "Unknown status, NEXT"
     fi
-
-done
+  done
+#else
+#  echo "node allready bootstraped try to boot normally"
+fi
 
