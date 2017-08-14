@@ -71,7 +71,7 @@ docker network create -d overlay your_overlay_network
 Start the cassandra service
 
 ```bash
-# makeshure filesystem exists
+# make sure file system exists
 docker service create --name makedir -t \
   --mode global \
   --mount type=bind,dst=/home,src=/home \
@@ -121,6 +121,8 @@ However in the case of persistent/ multi node setup there are two cases which ma
 2. The node running the docker engine dies (loss of `/var/lib/cassandra`)
 
 In case 1 the service should just rejoin the cassandra cluster as normal, even if the ip address changes. However in case 2 there is no easy way of knowing when the new swarm node is added if the intention is to scale the cassandra service or to replace the dead node. If the the physical node was lost as in case 1 you need to manually run through the [method described here.](https://docs.datastax.com/en/cassandra/2.1/cassandra/operations/opsReplaceNode.html) Of course this assumes that you set the *replication factor to greater than 1* on all your tables.
+
+Before adding the new node you should decommission or remove the old node to let cassandra bootstrap normally. See [RemoveNode](http://docs.datastax.com/en/cassandra/2.1/cassandra/tools/toolsRemoveNode.html)
 
 ## Node repair
 
