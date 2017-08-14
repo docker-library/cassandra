@@ -40,7 +40,7 @@ Scale one at a time else cassandra will complain about bootstrapping more than o
 
 Check the status of the cluster
 ```bash
-docker
+docker exec -it $(docker ps | grep cassandra.1 | awk '{print $1}') nodetool status
 ```
 
 ## Many nodes with volume mount
@@ -87,7 +87,7 @@ docker service create \
   webscam/cassandra:swarm_test
 ```
 
-You'll notice that we set the orchestration to global mode, so that there is only one Cassandra container per node in the swarm. Here we also mounted an ssd partition on the host machine for the containers data directory for improved performance.
+You'll notice that we set the orchestration to global mode, so that there is only one Cassandra container per node in the swarm. Here we also mounted an ssd/hdd partition on the host machine for the containers data directory for persistant storage/ improved performance.
 
 # Configuration options
 
@@ -106,3 +106,22 @@ Default setting `auto`
 The name of the service to look for DNS records of associated Cassandra tasks when bootstrapping a cluster in docker swarm mode. The script will get a list of IPs by looking at the DNS records for `tasks.$SERVICE_NAME`.
 
 Default setting `cassandra`
+
+# Maintanence Considerations
+
+The setup scripts in this reposetry will try to bootstrap and replace nodes in a sensable manor. However readding the [source documentation on node managment](https://docs.datastax.com/en/cassandra/2.1/cassandra/operations/operationsTOC.html), is worth it if your data is important to you.
+
+## Node replacement
+
+In the case of an unmounted/ non persistant service we will attempt to replace the node with the [method described here](https://docs.datastax.com/en/cassandra/2.1/cassandra/operations/ops_replace_live_node.html#opsReplaceLiveNodeAlternate) if the node dies. This only works if docker decides to bring the dead service up with the same ip address of the previous container, other wise you may still need to decomission the dead service as below.
+
+However in the case of persistant/ multi node setup there are two cases which may need to be accounted for.
+
+1. The service on a node dies and is automaticly repaced (`/var/lib/cassandra` persisted)
+2. The node running the docker engine dies (loss of `/var/lib/cassandra`)
+
+In case 1 the service should just rejoin the cassandra cluster as normal, even if the ip address changes. However in case 2 there is no easy way of knowing when the new swarm node is added if the intention is to scale the cassandra service or to replace the dead node. If the the physical node was lossed as in case 1 you need to manually run through the [method described here.](https://docs.datastax.com/en/cassandra/2.1/cassandra/operations/opsReplaceNode.html) Ofcourse this assumes that you set the *replication factor to greater than 1* on all your tables.
+
+## Node repair
+
+It is [recommended in the doculentation](https://docs.datastax.com/en/cassandra/2.1/cassandra/operations/opsRepairNodesTOC.html) that the cluster needs to have `nodetool repair` run sequentially on each node of the cluster at an interval of `gc_grace_period`. This is a PITA to script so until such a point I have a script/cron job which can orchestrate its self to run `nodetool repair`  exclusivly, sequentially one at a time on each service, this is an oporation which requires scripting/ intervention from outside of the service.

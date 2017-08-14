@@ -19,10 +19,6 @@ if [ "$1" = 'cassandra' ]; then
 
   sleep $[ ( $RANDOM % 10 ) + 1]
 
-  echo 'LAUNCH NODETOOL REPAIR IN BACKGROUND,
-SCRIPT WILL WAIT FOR CASSANDRA TO BE FULLY BOOTED'
-  nohup sh node-repair-after-full-boot.sh & # > /dev/stdout 2>&1 &
-
   : ${CASSANDRA_RPC_ADDRESS='0.0.0.0'}
   : ${HOST_COMMAND='hostname --ip-address'}
 
@@ -62,6 +58,10 @@ SCRIPT WILL WAIT FOR CASSANDRA TO BE FULLY BOOTED'
 
     # CASSANDRA_SEEDS=$(eval $SEEDS_COMMAND)
   fi
+
+  echo 'LAUNCH NODETOOL REPAIR IN BACKGROUND,
+SCRIPT WILL WAIT FOR CASSANDRA TO BE FULLY BOOTED'
+  nohup sh node-repair-after-full-boot.sh $CASSANDRA_BROADCAST_ADDRESS 2>&1 &
   
   sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_CONFIG/cassandra.yaml"
 
