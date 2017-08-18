@@ -67,6 +67,7 @@ SCRIPT WILL WAIT FOR CASSANDRA TO BE FULLY BOOTED'
 
   # Substitution
   for yaml in \
+    tombstone_failure_threshold \
     broadcast_address \
     broadcast_rpc_address \
     cluster_name \
