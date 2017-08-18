@@ -1,5 +1,5 @@
 # vim:set ft=dockerfile:
-FROM cassandra:%%CASSANDRA_VERSION%%
+FROM cassandra:3.10
 
 RUN apt-get update \
 	&& apt-get install -y curl dnsutils \
