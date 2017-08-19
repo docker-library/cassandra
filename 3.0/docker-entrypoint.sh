@@ -43,6 +43,7 @@ if [ "$1" = 'cassandra' ]; then
 		num_tokens \
 		rpc_address \
 		start_rpc \
+		enable_user_defined_functions \
 	; do
 		var="CASSANDRA_${yaml^^}"
 		val="${!var}"
