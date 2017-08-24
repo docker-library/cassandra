@@ -60,9 +60,14 @@ for version in "${versions[@]}"; do
 	fi
 	versionAliases+=( ${aliases[$version]:-} )
 
+	# $ wget -qO- 'https://dl.bintray.com/apache/cassandra/dists/311x/Release' | grep '^Architectures:'
+	# Architectures: i386 amd64
+	arches='amd64 i386'
+
 	echo
 	cat <<-EOE
 		Tags: $(join ', ' "${versionAliases[@]}")
+		Architectures: $(join ', ' $arches)
 		GitCommit: $commit
 		Directory: $version
 	EOE

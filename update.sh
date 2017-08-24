@@ -21,6 +21,7 @@ for version in "${versions[@]}"; do
 		sed 's/%%CASSANDRA_DIST%%/'$dist'/g; s/%%CASSANDRA_VERSION%%/'$fullVersion'/g' Dockerfile.template > "$version/Dockerfile"
 	)
 	
+	travisEnv='\n  - VERSION='"$version ARCH=i386$travisEnv"
 	travisEnv='\n  - VERSION='"$version$travisEnv"
 done
 
