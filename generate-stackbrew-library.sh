@@ -63,6 +63,9 @@ for version in "${versions[@]}"; do
 	# $ wget -qO- 'https://dl.bintray.com/apache/cassandra/dists/311x/Release' | grep '^Architectures:'
 	# Architectures: i386 amd64
 	arches='amd64 i386'
+	if [[ "$version" != 2.* ]]; then
+		arches+=' ppc64le'
+	fi
 
 	echo
 	cat <<-EOE
