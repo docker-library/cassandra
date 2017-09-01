@@ -64,8 +64,9 @@ for version in "${versions[@]}"; do
 	# Architectures: i386 amd64
 	arches='amd64 i386'
 	if [[ "$version" != 2.* ]]; then
-		arches+=' ppc64le'
+		arches+=' arm64v8 ppc64le'
 	fi
+	arches="$(echo "$arches" | xargs -n1 | sort)"
 
 	echo
 	cat <<-EOE
