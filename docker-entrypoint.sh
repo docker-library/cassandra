@@ -34,6 +34,23 @@ if [ "$1" = 'cassandra' ]; then
 	
 	sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_CONFIG/cassandra.yaml"
 
+    # Set Rack and Datacenter properties, if specified
+	for rackdc in dc rack; do
+		var="CASSANDRA_${rackdc^^}"
+		val="${!var}"
+		if [ "$val" ]; then
+            # Configure the setting in the properties file
+			sed -ri 's/^('"$rackdc"'=).*/\1'"$val"'/' "$CASSANDRA_CONFIG/cassandra-rackdc.properties"
+
+            # Specifying rack and dc properties means you probably want GossipingPropertyFileSnitch
+            # as well, unless you specifically requested something else.
+            if [ ! "$CASSANDRA_ENDPOINT_SNITCH" ]; then
+                export CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+            fi
+		fi
+	done
+
+    # Update supported Cassandra yaml properties from environment variables
 	for yaml in \
 		broadcast_address \
 		broadcast_rpc_address \
@@ -51,13 +68,6 @@ if [ "$1" = 'cassandra' ]; then
 		fi
 	done
 
-	for rackdc in dc rack; do
-		var="CASSANDRA_${rackdc^^}"
-		val="${!var}"
-		if [ "$val" ]; then
-			sed -ri 's/^('"$rackdc"'=).*/\1 '"$val"'/' "$CASSANDRA_CONFIG/cassandra-rackdc.properties"
-		fi
-	done
 fi
 
 exec "$@"
