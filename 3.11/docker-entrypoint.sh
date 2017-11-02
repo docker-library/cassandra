@@ -16,21 +16,21 @@ if [ "$1" = 'cassandra' ]; then
 
 	: ${CASSANDRA_RANGE_REQUEST_TIMEOUT_IN_MS='10000'}
 
-        : ${CASSANDRA_WRITE_REQUEST_TIMEOUT_IN_MS='2000'}
+	: ${CASSANDRA_WRITE_REQUEST_TIMEOUT_IN_MS='2000'}
 
-        : ${CASSANDRA_COUNTER_WRITE_REQUEST_TIMEOUT_IN_MS='5000'}
+	: ${CASSANDRA_COUNTER_WRITE_REQUEST_TIMEOUT_IN_MS='5000'}
 
-        : ${CASSANDRA_READ_REQUEST_TIMEOUT_IN_MS='5000'}
+	: ${CASSANDRA_READ_REQUEST_TIMEOUT_IN_MS='5000'}
 
-        : ${CASSANDRA_REQUEST_TIMEOUT_IN_MS='10000'}
+	: ${CASSANDRA_REQUEST_TIMEOUT_IN_MS='10000'}
 
-        : ${CASSANDRA_STORAGE_PORT='7000'}
+	: ${CASSANDRA_STORAGE_PORT='7000'}
 
-        : ${CASSANDRA_SSL_STORAGE_PORT='7001'}
+	: ${CASSANDRA_SSL_STORAGE_PORT='7001'}
+	
+	: ${CASSANDRA_NATIVE_TRANSPORT_PORT='9042'}
 
-        : ${CASSANDRA_NATIVE_TRANSPORT_PORT='9042'}
-
-        : ${CASSANDRA_RPC_PORT='9160'}
+	: ${CASSANDRA_RPC_PORT='9160'}
 
 	: ${CASSANDRA_RPC_ADDRESS='0.0.0.0'}
 
@@ -63,14 +63,14 @@ if [ "$1" = 'cassandra' ]; then
 		rpc_address \
 		start_rpc \
 		storage_port \
-                ssl_storage_port \
-                native_transport_port \
-                rpc_port \
+		ssl_storage_port \
+		native_transport_port \
+		rpc_port \
 		read_request_timeout_in_ms \
-                request_timeout_in_ms \
-                range_request_timeout_in_ms \
-                write_request_timeout_in_ms \
-                counter_write_request_timeout_in_ms \
+		request_timeout_in_ms \
+		range_request_timeout_in_ms \
+		write_request_timeout_in_ms \
+		counter_write_request_timeout_in_ms \
 	; do
 		var="CASSANDRA_${yaml^^}"
 		val="${!var}"
