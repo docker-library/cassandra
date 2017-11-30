@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+ulimit -l unlimited || true
+
+
 # first arg is `-f` or `--some-option`
 if [ "${1:0:1}" = '-' ]; then
 	set -- cassandra -f "$@"
