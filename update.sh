@@ -12,7 +12,7 @@ versions=( "${versions[@]%/}" )
 travisEnv=
 for version in "${versions[@]}"; do
 	dist="${version//./}"
-	packagesUrl="http://www.apache.org/dist/cassandra/debian/dists/${dist}x/main/binary-amd64/Packages.gz"
+	packagesUrl="https://www.apache.org/dist/cassandra/debian/dists/${dist}x/main/binary-amd64/Packages.gz"
 	fullVersion="$(
 		curl -fsSL "$packagesUrl" \
 			| gunzip \
