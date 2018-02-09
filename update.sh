@@ -3,6 +3,13 @@ set -Eeuo pipefail
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
+# -slim is automatically added
+defaultDebianSuite='stretch'
+declare -A debianSuite=(
+	[2.1]='jessie'
+	[2.2]='jessie'
+)
+
 versions=( "$@" )
 if [ ${#versions[@]} -eq 0 ]; then
 	versions=( */ )
@@ -24,8 +31,13 @@ for version in "${versions[@]}"; do
 
 	echo "$version: $fullVersion"
 
+	versionSuite="${debianSuite[$version]:-$defaultDebianSuite}-slim"
 	cp -a docker-entrypoint.sh "$version/"
-	sed 's/%%CASSANDRA_DIST%%/'$dist'/g; s/%%CASSANDRA_VERSION%%/'$fullVersion'/g' Dockerfile.template > "$version/Dockerfile"
+	sed \
+		-e 's/%%CASSANDRA_DIST%%/'$dist'/g;' \
+		-e 's/%%CASSANDRA_VERSION%%/'$fullVersion'/g' \
+		-e 's/%%SUITE%%/'$versionSuite'/g;' \
+		Dockerfile.template > "$version/Dockerfile"
 
 	# remove the "/docker-entrypoint.sh" backwards-compatibility symlink in Cassandra 3.12+
 	case "$version" in
