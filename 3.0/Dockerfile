@@ -11,6 +11,8 @@ RUN set -ex; \
 		libjemalloc1 \
 # free is used by cassandra-env.sh
 		procps \
+# "ip" is not required by Cassandra itself, but is commonly used in scripting Cassandra's configuration (since it is so fixated on explicit IP addresses)
+		iproute2 \
 	; \
 	if ! command -v gpg > /dev/null; then \
 		apt-get install -y --no-install-recommends \
