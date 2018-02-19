@@ -51,7 +51,7 @@ RUN set -ex; \
 	rm -rf "$GNUPGHOME"; \
 	apt-key list
 
-ENV CASSANDRA_VERSION 3.11.1
+ENV CASSANDRA_VERSION 3.11.2
 
 RUN set -ex; \
 	\
