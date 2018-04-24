@@ -13,18 +13,30 @@ if [ "$1" = 'cassandra' -a "$(id -u)" = '0' ]; then
 	exec gosu cassandra "$BASH_SOURCE" "$@"
 fi
 
+_ip_address() {
+	# scrape the first non-localhost IP address of the container
+	# in Swarm Mode, we often get two IPs -- the container IP, and the (shared) VIP, and the container IP should always be first
+	ip address | awk '
+		$1 == "inet" && $2 !~ /^127[.]/ {
+			gsub(/\/.+$/, "", $2)
+			print $2
+			exit
+		}
+	'
+}
+
 if [ "$1" = 'cassandra' ]; then
 	: ${CASSANDRA_RPC_ADDRESS='0.0.0.0'}
 
 	: ${CASSANDRA_LISTEN_ADDRESS='auto'}
 	if [ "$CASSANDRA_LISTEN_ADDRESS" = 'auto' ]; then
-		CASSANDRA_LISTEN_ADDRESS="$(hostname --ip-address)"
+		CASSANDRA_LISTEN_ADDRESS="$(_ip_address)"
 	fi
 
 	: ${CASSANDRA_BROADCAST_ADDRESS="$CASSANDRA_LISTEN_ADDRESS"}
 
 	if [ "$CASSANDRA_BROADCAST_ADDRESS" = 'auto' ]; then
-		CASSANDRA_BROADCAST_ADDRESS="$(hostname --ip-address)"
+		CASSANDRA_BROADCAST_ADDRESS="$(_ip_address)"
 	fi
 	: ${CASSANDRA_BROADCAST_RPC_ADDRESS:=$CASSANDRA_BROADCAST_ADDRESS}
 
