@@ -63,9 +63,19 @@ for version in "${versions[@]}"; do
 	# $ wget -qO- 'https://dl.bintray.com/apache/cassandra/dists/311x/Release' | grep '^Architectures:'
 	# Architectures: i386 amd64
 	arches='amd64 i386'
-	if [[ "$version" != 2.* ]]; then
-		arches+=' arm64v8 ppc64le'
+
+	# https://github.com/docker-library/cassandra/pull/116#issuecomment-326650640
+	# Exception (java.lang.RuntimeException) encountered during startup: java.lang.RuntimeException: java.util.concurrent.ExecutionException: java.lang.NoClassDefFoundError: Could not initialize class com.sun.jna.Native
+	# java.lang.RuntimeException: java.lang.RuntimeException: java.util.concurrent.ExecutionException: java.lang.NoClassDefFoundError: Could not initialize class com.sun.jna.Native
+	if [ "$version" != '2.2' ]; then
+		# on arm64, 2.1 works fine
+		arches+=' arm64v8'
 	fi
+	if [[ "$version" != 2.* ]]; then
+		# on ppc64le, 2.x both fail
+		arches+=' ppc64le'
+	fi
+
 	arches="$(echo "$arches" | xargs -n1 | sort)"
 
 	echo
