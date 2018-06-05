@@ -2,10 +2,14 @@ language: bash
 services: docker
 
 env:
-  - VERSION=3.10
+  - VERSION=3.11
+  - VERSION=3.11 ARCH=i386
   - VERSION=3.0
+  - VERSION=3.0 ARCH=i386
   - VERSION=2.2
+  - VERSION=2.2 ARCH=i386
   - VERSION=2.1
+  - VERSION=2.1 ARCH=i386
 
 install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
@@ -14,6 +18,12 @@ before_script:
   - env | sort
   - cd "$VERSION"
   - image="cassandra:$VERSION"
+  - |
+    if [ -n "$ARCH" ]; then
+        from="$(awk '$1 == toupper("FROM") { print $2 }' Dockerfile)"
+        docker pull "$ARCH/$from"
+        docker tag "$ARCH/$from" "$from"
+    fi
 
 script:
   - travis_retry docker build -t "$image" .

@@ -1,5 +1,5 @@
 # vim:set ft=dockerfile:
-FROM debian:%%SUITE%%
+FROM debian:stretch-slim
 
 # explicitly set user/group IDs
 RUN groupadd -r cassandra --gid=999 && useradd -r -g cassandra --uid=999 cassandra
@@ -51,7 +51,7 @@ RUN set -ex; \
 	rm -rf "$GNUPGHOME"; \
 	apt-key list
 
-ENV CASSANDRA_VERSION %%CASSANDRA_VERSION%%
+ENV CASSANDRA_VERSION 3.11.2
 
 RUN set -ex; \
 	\
@@ -63,7 +63,7 @@ RUN set -ex; \
 	case "$dpkgArch" in \
 		amd64|i386) \
 # arches officialy included in upstream's repo metadata
-			echo 'deb http://www.apache.org/dist/cassandra/debian %%CASSANDRA_DIST%%x main' > /etc/apt/sources.list.d/cassandra.list; \
+			echo 'deb http://www.apache.org/dist/cassandra/debian 311x main' > /etc/apt/sources.list.d/cassandra.list; \
 			apt-get update; \
 			;; \
 		*) \
