@@ -16,18 +16,28 @@ install:
 
 before_script:
   - env | sort
+  - wget -qO- 'https://github.com/tianon/pgp-happy-eyeballs/raw/master/hack-my-builds.sh' | bash
   - cd "$VERSION"
   - image="cassandra:$VERSION"
   - |
-    if [ -n "$ARCH" ]; then
-        from="$(awk '$1 == toupper("FROM") { print $2 }' Dockerfile)"
-        docker pull "$ARCH/$from"
-        docker tag "$ARCH/$from" "$from"
-    fi
+    (
+      set -Eeuo pipefail
+      set -x
+      if [ -n "${ARCH:-}" ]; then
+          from="$(awk '$1 == toupper("FROM") { print $2 }' Dockerfile)"
+          docker pull "$ARCH/$from"
+          docker tag "$ARCH/$from" "$from"
+      fi
+    )
 
 script:
-  - travis_retry docker build -t "$image" .
-  - ~/official-images/test/run.sh "$image"
+  - |
+    (
+      set -Eeuo pipefail
+      set -x
+      docker build -t "$image" .
+      ~/official-images/test/run.sh "$image"
+    )
 
 after_script:
   - docker images
