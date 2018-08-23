@@ -155,10 +155,16 @@ RUN mkdir -p /var/lib/cassandra "$CASSANDRA_CONFIG" \
 	&& chmod 777 /var/lib/cassandra "$CASSANDRA_CONFIG"
 VOLUME /var/lib/cassandra
 
+RUN sed -i '/client_encryption_options:/{ N; s/.*enabled: false/client_encryption_options:\n    enabled: true/; }' /etc/cassandra/cassandra.yaml
+RUN sed -i '/9142/s/^# //g' /etc/cassandra/cassandra.yaml
+RUN mkdir conf
+RUN keytool -genkey -noprompt -dname "CN=example.com" -keyalg RSA -alias node0 -validity 36500 -keypass cassandra -storepass cassandra -keystore conf/.keystore -storetype pkcs12
+
 # 7000: intra-node communication
 # 7001: TLS intra-node communication
 # 7199: JMX
 # 9042: CQL
 # 9160: thrift service
-EXPOSE 7000 7001 7199 9042 9160
+# 9142: SSL
+EXPOSE 7000 7001 7199 9042 9160 9142
 CMD ["cassandra", "-f"]
