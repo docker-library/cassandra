@@ -26,6 +26,16 @@ _ip_address() {
 	'
 }
 
+# "sed -i", but without "mv" (which doesn't work on a bind-mounted file, for example)
+_sed-in-place() {
+	local filename="$1"; shift
+	local tempFile
+	tempFile="$(mktemp)"
+	sed "$@" "$filename" > "$tempFile"
+	cat "$tempFile" > "$filename"
+	rm "$tempFile"
+}
+
 if [ "$1" = 'cassandra' ]; then
 	: ${CASSANDRA_RPC_ADDRESS='0.0.0.0'}
 
@@ -45,8 +55,9 @@ if [ "$1" = 'cassandra' ]; then
 		: ${CASSANDRA_SEEDS:="cassandra"}
 	fi
 	: ${CASSANDRA_SEEDS:="$CASSANDRA_BROADCAST_ADDRESS"}
-	
-	sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_CONFIG/cassandra.yaml"
+
+	_sed-in-place "$CASSANDRA_CONFIG/cassandra.yaml" \
+		-r 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/'
 
 	for yaml in \
 		broadcast_address \
@@ -61,7 +72,8 @@ if [ "$1" = 'cassandra' ]; then
 		var="CASSANDRA_${yaml^^}"
 		val="${!var}"
 		if [ "$val" ]; then
-			sed -ri 's/^(# )?('"$yaml"':).*/\2 '"$val"'/' "$CASSANDRA_CONFIG/cassandra.yaml"
+			_sed-in-place "$CASSANDRA_CONFIG/cassandra.yaml" \
+				-r 's/^(# )?('"$yaml"':).*/\2 '"$val"'/'
 		fi
 	done
 
@@ -69,7 +81,8 @@ if [ "$1" = 'cassandra' ]; then
 		var="CASSANDRA_${rackdc^^}"
 		val="${!var}"
 		if [ "$val" ]; then
-			sed -ri 's/^('"$rackdc"'=).*/\1 '"$val"'/' "$CASSANDRA_CONFIG/cassandra-rackdc.properties"
+			_sed-in-place "$CASSANDRA_CONFIG/cassandra-rackdc.properties" \
+				-r 's/^('"$rackdc"'=).*/\1 '"$val"'/'
 		fi
 	done
 fi
