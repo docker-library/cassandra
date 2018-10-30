@@ -6,8 +6,7 @@ cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 # -slim is automatically added
 defaultDebianSuite='stretch'
 declare -A debianSuite=(
-	[2.1]='jessie'
-	[2.2]='jessie'
+	#[2.2]='jessie'
 )
 
 versions=( "$@" )
