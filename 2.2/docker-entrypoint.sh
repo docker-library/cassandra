@@ -7,6 +7,15 @@ if [ "$#" -eq 0 ] || [ "${1#-}" != "$1" ]; then
 	set -- cassandra -f "$@"
 fi
 
+if [ "$CASSANDRA_CONFIG" != "/etc/cassandra" ]; then
+  if [ -z "$(ls -A $CASSANDRA_CONFIG)" ]; then
+    echo "Copying from /etc/cassandra to $CASSANDRA_CONFIG"
+    cp -r /etc/cassandra/* $CASSANDRA_CONFIG/.
+  else
+    echo "$CASSANDRA_CONFIG is not /etc/cassandra and also not empty, not copying image templatefiles"
+  fi
+fi
+
 # allow the container to be started with `--user`
 if [ "$1" = 'cassandra' -a "$(id -u)" = '0' ]; then
 	find /var/lib/cassandra /var/log/cassandra "$CASSANDRA_CONFIG" \
