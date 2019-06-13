@@ -2,25 +2,23 @@
 
 ## Maintained by: [the Docker Community](https://github.com/docker-library/cassandra)
 
-This is the Git repo of the [Docker "Official Image"](https://docs.docker.com/docker-hub/official_repos/) for [cassandra](https://hub.docker.com/_/cassandra/) (not to be confused with any official cassandra image provided by cassandra upstream). See [the Docker Hub page](https://hub.docker.com/_/cassandra/) for the full readme on how to use this Docker image and for information regarding contributing and issues.
+This is the Git repo of the [Docker "Official Image"](https://github.com/docker-library/official-images#what-are-official-images) for [`cassandra`](https://hub.docker.com/_/cassandra/) (not to be confused with any official `cassandra` image provided by `cassandra` upstream). See [the Docker Hub page](https://hub.docker.com/_/cassandra/) for the full readme on how to use this Docker image and for information regarding contributing and issues.
 
-The [full description from Docker Hub](https://hub.docker.com/_/cassandra/) is generated over in [docker-library/docs](https://github.com/docker-library/docs), specifically in [docker-library/docs/cassandra](https://github.com/docker-library/docs/tree/master/cassandra).
+The [full image description on Docker Hub](https://hub.docker.com/_/cassandra/) is generated/maintained over in [the docker-library/docs repository](https://github.com/docker-library/docs), specifically in [the `cassandra` directory](https://github.com/docker-library/docs/tree/master/cassandra).
 
 ## See a change merged here that doesn't show up on Docker Hub yet?
 
-Check [the "library/cassandra" manifest file in the docker-library/official-images repo](https://github.com/docker-library/official-images/blob/master/library/cassandra), especially [PRs with the "library/cassandra" label on that repo](https://github.com/docker-library/official-images/labels/library%2Fcassandra).
+For more information about the full official images change lifecycle, see [the "An image's source changed in Git, now what?" FAQ entry](https://github.com/docker-library/faq#an-images-source-changed-in-git-now-what).
 
-For more information about the official images process, see the [docker-library/official-images readme](https://github.com/docker-library/official-images/blob/master/README.md).
+For outstanding `cassandra` image PRs, check [PRs with the "library/cassandra" label on the official-images repository](https://github.com/docker-library/official-images/labels/library%2Fcassandra). For the current "source of truth" for [`cassandra`](https://hub.docker.com/_/cassandra/), see [the `library/cassandra` file in the official-images repository](https://github.com/docker-library/official-images/blob/master/library/cassandra).
 
 ---
 
--	[Travis CI:  
-	![build status badge](https://img.shields.io/travis/docker-library/cassandra/master.svg)](https://travis-ci.org/docker-library/cassandra/branches)
--	[Automated `update.sh`:  
-	![build status badge](https://doi-janky.infosiftr.net/job/update.sh/job/cassandra/badge/icon)](https://doi-janky.infosiftr.net/job/update.sh/job/cassandra)
+-	[![build status badge](https://img.shields.io/travis/docker-library/cassandra/master.svg?label=Travis%20CI)](https://travis-ci.org/docker-library/cassandra/branches)
+-	[![build status badge](https://img.shields.io/jenkins/s/https/doi-janky.infosiftr.net/job/update.sh/job/cassandra.svg?label=Automated%20update.sh)](https://doi-janky.infosiftr.net/job/update.sh/job/cassandra)
 
 | Build | Status | Badges | (per-arch) |
 |:-:|:-:|:-:|:-:|
-| [`amd64`<br />![build status badge](https://doi-janky.infosiftr.net/job/multiarch/job/amd64/job/cassandra/badge/icon)](https://doi-janky.infosiftr.net/job/multiarch/job/amd64/job/cassandra) | [`arm64v8`<br />![build status badge](https://doi-janky.infosiftr.net/job/multiarch/job/arm64v8/job/cassandra/badge/icon)](https://doi-janky.infosiftr.net/job/multiarch/job/arm64v8/job/cassandra) | [`i386`<br />![build status badge](https://doi-janky.infosiftr.net/job/multiarch/job/i386/job/cassandra/badge/icon)](https://doi-janky.infosiftr.net/job/multiarch/job/i386/job/cassandra) | [`ppc64le`<br />![build status badge](https://doi-janky.infosiftr.net/job/multiarch/job/ppc64le/job/cassandra/badge/icon)](https://doi-janky.infosiftr.net/job/multiarch/job/ppc64le/job/cassandra) |
+| [![amd64 build status badge](https://img.shields.io/jenkins/s/https/doi-janky.infosiftr.net/job/multiarch/job/amd64/job/cassandra.svg?label=amd64)](https://doi-janky.infosiftr.net/job/multiarch/job/amd64/job/cassandra) | [![arm64v8 build status badge](https://img.shields.io/jenkins/s/https/doi-janky.infosiftr.net/job/multiarch/job/arm64v8/job/cassandra.svg?label=arm64v8)](https://doi-janky.infosiftr.net/job/multiarch/job/arm64v8/job/cassandra) | [![i386 build status badge](https://img.shields.io/jenkins/s/https/doi-janky.infosiftr.net/job/multiarch/job/i386/job/cassandra.svg?label=i386)](https://doi-janky.infosiftr.net/job/multiarch/job/i386/job/cassandra) | [![ppc64le build status badge](https://img.shields.io/jenkins/s/https/doi-janky.infosiftr.net/job/multiarch/job/ppc64le/job/cassandra.svg?label=ppc64le)](https://doi-janky.infosiftr.net/job/multiarch/job/ppc64le/job/cassandra) |
 
 <!-- THIS FILE IS GENERATED BY https://github.com/docker-library/docs/blob/master/generate-repo-stub-readme.sh -->
