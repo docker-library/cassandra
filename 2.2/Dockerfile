@@ -14,6 +14,10 @@ RUN set -eux; \
 		procps \
 # "ip" is not required by Cassandra itself, but is commonly used in scripting Cassandra's configuration (since it is so fixated on explicit IP addresses)
 		iproute2 \
+# Cassandra will automatically use numactl if available
+#   https://github.com/apache/cassandra/blob/18bcda2d4c2eba7370a0b21f33eed37cb730bbb3/bin/cassandra#L90-L100
+#   https://github.com/apache/cassandra/commit/604c0e87dc67fa65f6904ef9a98a029c9f2f865a
+		numactl \
 	; \
 	rm -rf /var/lib/apt/lists/*
 
