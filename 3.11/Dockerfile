@@ -57,7 +57,7 @@ RUN set -eux; \
 	rm -rf "$GNUPGHOME"; \
 	apt-key list
 
-ENV CASSANDRA_VERSION 3.11.4
+ENV CASSANDRA_VERSION 3.11.5
 
 RUN set -eux; \
 	\
