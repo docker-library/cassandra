@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# Reduce open file limit for newer kernels + older JVM
+if [[ $(ulimit -n) -gt 100000 ]]; then
+  ulimit -n 100000
+fi
+
 # first arg is `-f` or `--some-option`
 # or there are no args
 if [ "$#" -eq 0 ] || [ "${1#-}" != "$1" ]; then

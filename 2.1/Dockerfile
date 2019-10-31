@@ -61,6 +61,10 @@ ENV CASSANDRA_VERSION 2.1.21
 
 RUN set -eux; \
 	\
+# Workaround for old java + new kernel.  Newer kernels have a high open file limit, but older JVMs attempt to pre-allocate for every FD.
+# https://stackoverflow.com/questions/49435109/error-upon-jar-execution-unable-to-allocate-file-descriptor-table
+  ulimit -n 10000; \
+	\
 # https://bugs.debian.org/877677
 # update-alternatives: error: error creating symbolic link '/usr/share/man/man1/rmid.1.gz.dpkg-tmp': No such file or directory
 	mkdir -p /usr/share/man/man1/; \
