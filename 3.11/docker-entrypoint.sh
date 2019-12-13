@@ -68,6 +68,8 @@ if [ "$1" = 'cassandra' ]; then
 		num_tokens \
 		rpc_address \
 		start_rpc \
+		authenticator \
+		authorizer \		
 	; do
 		var="CASSANDRA_${yaml^^}"
 		val="${!var}"
