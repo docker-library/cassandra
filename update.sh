@@ -4,7 +4,7 @@ set -Eeuo pipefail
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
 # -slim is automatically added
-defaultDebianSuite='stretch'
+defaultDebianSuite='buster'
 declare -A debianSuite=(
 	#[2.2]='jessie'
 )

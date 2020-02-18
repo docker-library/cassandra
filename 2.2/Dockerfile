@@ -1,5 +1,5 @@
 # vim:set ft=dockerfile:
-FROM debian:stretch-slim
+FROM debian:buster-slim
 
 # explicitly set user/group IDs
 RUN groupadd -r cassandra --gid=999 && useradd -r -g cassandra --uid=999 cassandra
@@ -9,7 +9,7 @@ RUN set -eux; \
 	apt-get install -y --no-install-recommends \
 		gnupg dirmngr \
 # solves warning: "jemalloc shared library could not be preloaded to speed up memory allocations"
-		libjemalloc1 \
+		libjemalloc2 \
 # free is used by cassandra-env.sh
 		procps \
 # "ip" is not required by Cassandra itself, but is commonly used in scripting Cassandra's configuration (since it is so fixated on explicit IP addresses)
@@ -18,6 +18,8 @@ RUN set -eux; \
 #   https://github.com/apache/cassandra/blob/18bcda2d4c2eba7370a0b21f33eed37cb730bbb3/bin/cassandra#L90-L100
 #   https://github.com/apache/cassandra/commit/604c0e87dc67fa65f6904ef9a98a029c9f2f865a
 		numactl \
+# Cassandra's APT repository is served over https
+		ca-certificates \
 	; \
 	rm -rf /var/lib/apt/lists/*
 
@@ -41,12 +43,14 @@ RUN set -eux; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	gosu nobody true
 
-# https://wiki.apache.org/cassandra/DebianPackaging#Adding_Repository_Keys
+# https://cwiki.apache.org/confluence/display/CASSANDRA2/DebianPackaging#DebianPackaging-AddingRepositoryKeys
 ENV GPG_KEYS \
 # gpg: key 0353B12C: public key "T Jake Luciani <jake@apache.org>" imported
 	514A2AD631A57A16DD0047EC749D6EEC0353B12C \
 # gpg: key FE4B2BDA: public key "Michael Shuler <michael@pbandjelly.org>" imported
-	A26E528B271F19B9E5D8E19EA278B781FE4B2BDA
+	A26E528B271F19B9E5D8E19EA278B781FE4B2BDA \
+# gpg: key E91335D77E3E87CB: public key "Michael Semb Wever <mick@thelastpickle.com>" imported
+	A4C465FEA0C552561A392A61E91335D77E3E87CB
 RUN set -eux; \
 	export GNUPGHOME="$(mktemp -d)"; \
 	for key in $GPG_KEYS; do \
@@ -69,7 +73,7 @@ RUN set -eux; \
 	case "$dpkgArch" in \
 		amd64|i386) \
 # arches officialy included in upstream's repo metadata
-			echo 'deb http://www.apache.org/dist/cassandra/debian 22x main' > /etc/apt/sources.list.d/cassandra.list; \
+			echo 'deb https://downloads.apache.org/cassandra/debian 22x main' > /etc/apt/sources.list.d/cassandra.list; \
 			apt-get update; \
 			;; \
 		*) \
@@ -96,7 +100,7 @@ RUN set -eux; \
 			tempDir="$(mktemp -d)"; \
 			for pkg in cassandra cassandra-tools; do \
 				deb="${pkg}_${CASSANDRA_VERSION}_all.deb"; \
-				wget -O "$tempDir/$deb" "https://www.apache.org/dist/cassandra/debian/pool/main/c/cassandra/$deb"; \
+				wget -O "$tempDir/$deb" "https://downloads.apache.org/cassandra/debian/pool/main/c/cassandra/$deb"; \
 			done; \
 			\
 # create a temporary local APT repo to install from (so that dependency resolution can be handled by APT, as it should be)
