@@ -34,6 +34,22 @@ dirCommit() {
 	)
 }
 
+getArches() {
+	local repo="$1"; shift
+	local officialImagesUrl='https://github.com/docker-library/official-images/raw/master/library/'
+
+	eval "declare -g -A parentRepoToArches=( $(
+		find -name 'Dockerfile' -exec awk '
+				toupper($1) == "FROM" && $2 !~ /^('"$repo"'|scratch|.*\/.*)(:|$)/ {
+					print "'"$officialImagesUrl"'" $2
+				}
+			' '{}' + \
+			| sort -u \
+			| xargs bashbrew cat --format '[{{ .RepoName }}:{{ .TagName }}]="{{ join " " .TagEntry.Architectures }}"'
+	) )"
+}
+getArches 'cassandra'
+
 cat <<-EOH
 # this file is generated via https://github.com/docker-library/cassandra/blob/$(fileCommit "$self")/$self
 
@@ -60,23 +76,29 @@ for version in "${versions[@]}"; do
 	fi
 	versionAliases+=( ${aliases[$version]:-} )
 
-	# $ wget -qO- 'https://dl.bintray.com/apache/cassandra/dists/311x/Release' | grep '^Architectures:'
-	# Architectures: i386 amd64
-	arches='amd64 i386'
+	parent="$(awk 'toupper($1) == "FROM" { print $2 }' "$version/Dockerfile")"
+	arches="${parentRepoToArches[$parent]}"
 
-	# https://github.com/docker-library/cassandra/pull/116#issuecomment-326650640
-	# Exception (java.lang.RuntimeException) encountered during startup: java.lang.RuntimeException: java.util.concurrent.ExecutionException: java.lang.NoClassDefFoundError: Could not initialize class com.sun.jna.Native
-	# java.lang.RuntimeException: java.lang.RuntimeException: java.util.concurrent.ExecutionException: java.lang.NoClassDefFoundError: Could not initialize class com.sun.jna.Native
-	if [ "$version" != '2.2' ]; then
-		# on arm64, 2.1 works fine
-		arches+=' arm64v8'
-	fi
-	if [[ "$version" != 2.* ]]; then
-		# on ppc64le, 2.x both fail
-		arches+=' ppc64le'
+	if [ "$version" = '2.2' ]; then
+		# https://github.com/docker-library/cassandra/pull/116#issuecomment-326650640
+		# Exception (java.lang.RuntimeException) encountered during startup: java.lang.RuntimeException: java.util.concurrent.ExecutionException: java.lang.NoClassDefFoundError: Could not initialize class com.sun.jna.Native
+		# java.lang.RuntimeException: java.lang.RuntimeException: java.util.concurrent.ExecutionException: java.lang.NoClassDefFoundError: Could not initialize class com.sun.jna.Native
+		arches="$(sed -r -e 's/ arm64v8 / /g' <<<" $arches ")"
 	fi
 
-	arches="$(echo "$arches" | xargs -n1 | sort)"
+	if [ "$version" = '2.1' ]; then
+		# 2.1 fails on arm32v7
+		# "A fatal error has been detected by the Java Runtime Environment: Internal Error (os_linux_zero.cpp:254), pid=1, tid=0xf7531460"
+		arches="$(sed -r -e 's/ arm32v[0-9]+ / /g' <<<" $arches ")"
+	fi
+
+	# s390x is not actually supported
+	# https://github.com/docker-library/cassandra/pull/116#issuecomment-326654542
+	# https://github.com/docker-library/cassandra/issues/193
+	# https://issues.apache.org/jira/browse/CASSANDRA-11054
+	arches="$(sed -r -e 's/ s390x / /g' <<<" $arches ")"
+
+	arches="$(xargs -n1 <<<"$arches" | sort)"
 
 	echo
 	cat <<-EOE
