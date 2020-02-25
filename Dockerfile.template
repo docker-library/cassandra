@@ -71,8 +71,6 @@ RUN set -eux; \
 	case "$dpkgArch" in \
 		amd64|i386) \
 # arches officialy included in upstream's repo metadata
-			apt-get update; \
-			apt-get install -y --no-install-recommends apt-transport-https; \
 			echo 'deb http://www.apache.org/dist/cassandra/debian %%CASSANDRA_DIST%%x main' > /etc/apt/sources.list.d/cassandra.list; \
 			apt-get update; \
 			;; \
