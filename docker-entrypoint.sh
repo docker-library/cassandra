@@ -85,6 +85,46 @@ if [ "$1" = 'cassandra' ]; then
 				-r 's/^('"$rackdc"'=).*/\1 '"$val"'/'
 		fi
 	done
+
+	if [ -d /docker-entrypoint-initdb.d ]; then
+		#start cassandra executable in background
+		echo "BOOTSTRAP  $(date +%H-%M-%S) start cassandra in the background"
+		cassandra -p /var/run/cassandra/cassandra.pid &
+
+		#wait for cluster init
+		for i in {60..0}; do
+			if [ $(nmap -sT ${CASSANDRA_BROADCAST_ADDRESS} -p 9042,9160 | { grep 'tcp open' || true; } | wc -l) -eq 2 ]; then
+				break
+			fi
+			echo "BOOTSTRAP  $(date +%H-%M-%S) cassandra init process in progress..."
+			sleep 1
+		done
+
+		if [ "$i" = 0 ]; then
+			echo >&2 "BOOTSTRAP  $(date +%H-%M-%S) cassandra init process failed."
+			exit 1
+		fi
+
+		for f in /docker-entrypoint-initdb.d/*; do
+			case "$f" in
+				*.sh)     echo "BOOTSTRAP  $(date +%H-%M-%S) $0: running $f"; . "$f" ;;
+				*.cql)    echo "BOOTSTRAP  $(date +%H-%M-%S) $0: running $f"; cqlsh -e "$(cat $f)"; echo ;;
+				*.cql.gz) echo "BOOTSTRAP  $(date +%H-%M-%S) $0: running $f"; cqlsh -e "$(zcat $f)"; echo ;;
+				*)        echo "BOOTSTRAP  $(date +%H-%M-%S) $0: ignoring $f" ;;
+			esac
+			echo
+		done
+
+		sleep 5
+		pid=$(cat /var/run/cassandra/cassandra.pid)
+
+		if ! kill -s TERM "$pid"; then
+			echo >&2 "BOOTSTRAP  $(date +%H-%M-%S) cassandra init process failed."
+			exit 1
+		fi
+        sleep 5
+        echo "BOOTSTRAP  $(date +%H-%M-%S) cassandra init process done. Ready for start up."
+    fi
 fi
 
 exec "$@"

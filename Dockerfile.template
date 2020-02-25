@@ -18,6 +18,8 @@ RUN set -eux; \
 #   https://github.com/apache/cassandra/blob/18bcda2d4c2eba7370a0b21f33eed37cb730bbb3/bin/cassandra#L90-L100
 #   https://github.com/apache/cassandra/commit/604c0e87dc67fa65f6904ef9a98a029c9f2f865a
 		numactl \
+# "nmap" is used by database initdb.d logic
+		nmap \		
 	; \
 	rm -rf /var/lib/apt/lists/*
 
@@ -69,6 +71,8 @@ RUN set -eux; \
 	case "$dpkgArch" in \
 		amd64|i386) \
 # arches officialy included in upstream's repo metadata
+			apt-get update; \
+			apt-get install -y --no-install-recommends apt-transport-https; \
 			echo 'deb http://www.apache.org/dist/cassandra/debian %%CASSANDRA_DIST%%x main' > /etc/apt/sources.list.d/cassandra.list; \
 			apt-get update; \
 			;; \
