@@ -24,7 +24,8 @@ RUN set -eux; \
 	rm -rf /var/lib/apt/lists/*
 
 # grab gosu for easy step-down from root
-ENV GOSU_VERSION 1.11
+# https://github.com/tianon/gosu/releases
+ENV GOSU_VERSION 1.12
 RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
