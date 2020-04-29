@@ -15,7 +15,6 @@ if [ ${#versions[@]} -eq 0 ]; then
 fi
 versions=( "${versions[@]%/}" )
 
-travisEnv=
 for version in "${versions[@]}"; do
 	possibleVersions=( $(
 		git ls-remote --tags 'https://gitbox.apache.org/repos/asf/cassandra.git' "refs/tags/cassandra-$version*" \
@@ -62,9 +61,4 @@ for version in "${versions[@]}"; do
 			sed -i 's/python3/python/g' "$version/Dockerfile"
 			;;
 	esac
-
-	travisEnv='\n  - VERSION='"$version$travisEnv"
 done
-
-travis="$(awk -v 'RS=\n\n' '$1 == "env:" { $0 = "env:'"$travisEnv"'" } { printf "%s%s", $0, RS }' .travis.yml)"
-echo "$travis" > .travis.yml
