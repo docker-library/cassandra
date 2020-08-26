@@ -13,7 +13,7 @@ RUN set -eux; \
 # "free" is used by cassandra-env.sh
 		procps \
 # "cqlsh" needs a python interpreter
-		python \
+		python3 \
 # "ip" is not required by Cassandra itself, but is commonly used in scripting Cassandra's configuration (since it is so fixated on explicit IP addresses)
 		iproute2 \
 # Cassandra will automatically use numactl if available
@@ -142,7 +142,6 @@ RUN set -eux; \
 VOLUME /var/lib/cassandra
 
 COPY docker-entrypoint.sh /usr/local/bin/
-RUN ln -s usr/local/bin/docker-entrypoint.sh /docker-entrypoint.sh # backwards compat
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 # 7000: intra-node communication

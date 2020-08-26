@@ -3,10 +3,12 @@ set -Eeuo pipefail
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
-# TODO update to 11 for 4.0 (https://issues.apache.org/jira/browse/CASSANDRA-9608)
-defaultJavaVersion='8'
+defaultJavaVersion='11'
 declare -A javaVersions=(
-	#[2.2]='8'
+	[2.1]='8'
+	[2.2]='8'
+	[3.0]='8'
+	[3.11]='8'
 )
 
 versions=( "$@" )
