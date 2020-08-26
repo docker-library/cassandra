@@ -1,4 +1,4 @@
-FROM adoptopenjdk:8-jre-hotspot-bionic
+FROM adoptopenjdk:11-jre-hotspot-bionic
 
 # explicitly set user/group IDs
 RUN set -eux; \
