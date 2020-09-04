@@ -9,8 +9,13 @@ declare -A aliases=(
 self="$(basename "$BASH_SOURCE")"
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
-versions=( */ )
-versions=( "${versions[@]%/}" )
+if [ "$#" -eq 0 ]; then
+	versions="$(jq -r 'keys | map(@sh) | join(" ")' versions.json)"
+	eval "set -- $versions"
+fi
+
+# sort version numbers with highest first
+IFS=$'\n'; set -- $(sort -rV <<<"$*"); unset IFS
 
 # get the most recent commit which modified any of "$@"
 fileCommit() {
@@ -65,10 +70,10 @@ join() {
 	echo "${out#$sep}"
 }
 
-for version in "${versions[@]}"; do
-	commit="$(dirCommit "$version")"
+for version; do
+	export version
 
-	fullVersion="$(git show "$commit":"$version/Dockerfile" | awk '$1 == "ENV" && $2 == "CASSANDRA_VERSION" { print $3; exit }')"
+	fullVersion="$(jq -r '.[env.version].version' versions.json)"
 
 	versionAliases=( $fullVersion )
 	if [ "$version" != "$fullVersion" ]; then
@@ -99,6 +104,8 @@ for version in "${versions[@]}"; do
 	arches="$(sed -r -e 's/ s390x / /g' <<<" $arches ")"
 
 	arches="$(xargs -n1 <<<"$arches" | sort)"
+
+	commit="$(dirCommit "$version")"
 
 	echo
 	cat <<-EOE

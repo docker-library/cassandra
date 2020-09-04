@@ -1,4 +1,4 @@
-FROM adoptopenjdk:%%JAVA_VERSION%%-jre-hotspot-bionic
+FROM adoptopenjdk:{{ .java }}-jre-hotspot-bionic
 
 # explicitly set user/group IDs
 RUN set -eux; \
@@ -13,7 +13,15 @@ RUN set -eux; \
 # "free" is used by cassandra-env.sh
 		procps \
 # "cqlsh" needs a python interpreter
+{{
+	# python3 is only supported in 4.0+
+	# https://issues.apache.org/jira/browse/CASSANDRA-10190
+	if env.version | split(".") | .[0] | tonumber < 4 then (
+-}}
+		python \
+{{ ) else ( -}}
 		python3 \
+{{ ) end -}}
 # "ip" is not required by Cassandra itself, but is commonly used in scripting Cassandra's configuration (since it is so fixated on explicit IP addresses)
 		iproute2 \
 # Cassandra will automatically use numactl if available
@@ -59,8 +67,8 @@ ENV GPG_KEYS \
 # gpg: key E91335D77E3E87CB: public key "Michael Semb Wever <mick@thelastpickle.com>" imported
 	A4C465FEA0C552561A392A61E91335D77E3E87CB
 
-ENV CASSANDRA_VERSION %%CASSANDRA_VERSION%%
-ENV CASSANDRA_SHA512 %%CASSANDRA_SHA512%%
+ENV CASSANDRA_VERSION {{ .version }}
+ENV CASSANDRA_SHA512 {{ .sha512 }}
 
 RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
@@ -142,7 +150,9 @@ RUN set -eux; \
 VOLUME /var/lib/cassandra
 
 COPY docker-entrypoint.sh /usr/local/bin/
+{{ if env.version | split(".") | .[0] | tonumber < 4 then ( -}}
 RUN ln -s usr/local/bin/docker-entrypoint.sh /docker-entrypoint.sh # backwards compat
+{{ ) else "" end -}}
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 # 7000: intra-node communication
