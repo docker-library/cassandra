@@ -120,8 +120,7 @@ RUN set -eux; \
 	\
 	dpkgArch="$(dpkg --print-architecture)"; \
 	case "$dpkgArch" in \
-		arm64 \
-		ppc64el) \
+		arm64|ppc64el) \
 # https://issues.apache.org/jira/browse/CASSANDRA-13345
 # "The stack size specified is too small, Specify at least 328k"
 			if grep -q -- '^-Xss' "$CASSANDRA_CONF/jvm.options"; then \
