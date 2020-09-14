@@ -68,6 +68,11 @@ if [ "$1" = 'cassandra' ]; then
 		num_tokens \
 		rpc_address \
 		start_rpc \
+		storage_port \
+                ssl_storage_port \
+                native_transport_port \
+                authenticator \
+                authorizer \
 	; do
 		var="CASSANDRA_${yaml^^}"
 		val="${!var}"
@@ -76,6 +81,15 @@ if [ "$1" = 'cassandra' ]; then
 				-r 's/^(# )?('"$yaml"':).*/\2 '"$val"'/'
 		fi
 	done
+	
+	for jmx in JMX_PORT; do
+                var="CASSANDRA_${jmx}"
+                val="${!var}"
+                if [ "$val" ]; then
+                        _sed-in-place "$CASSANDRA_CONFIG/cassandra-env.sh" \
+                                -r 's/^('"$jmx"'=).*/\1'"$val"'/'
+                fi
+        done
 
 	for rackdc in dc rack; do
 		var="CASSANDRA_${rackdc^^}"
