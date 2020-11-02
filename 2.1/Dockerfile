@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM adoptopenjdk:8-jre-hotspot-bionic
+FROM adoptopenjdk:8-jre-hotspot-focal
 
 # explicitly set user/group IDs
 RUN set -eux; \
@@ -15,7 +15,7 @@ RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 # solves warning: "jemalloc shared library could not be preloaded to speed up memory allocations"
-		libjemalloc1 \
+		libjemalloc2 \
 # "free" is used by cassandra-env.sh
 		procps \
 # "cqlsh" needs a python interpreter
@@ -27,7 +27,11 @@ RUN set -eux; \
 #   https://github.com/apache/cassandra/commit/604c0e87dc67fa65f6904ef9a98a029c9f2f865a
 		numactl \
 	; \
-	rm -rf /var/lib/apt/lists/*
+	rm -rf /var/lib/apt/lists/*; \
+# https://issues.apache.org/jira/browse/CASSANDRA-15767 ("bin/cassandra" only looks for "libjemalloc.so" or "libjemalloc.so.1" which doesn't match our "libjemalloc.so.2")
+	libjemalloc="$(readlink -e /usr/lib/*/libjemalloc.so.2)"; \
+	ln -sT "$libjemalloc" /usr/local/lib/libjemalloc.so; \
+	ldconfig
 
 # grab gosu for easy step-down from root
 # https://github.com/tianon/gosu/releases
