@@ -147,6 +147,7 @@ RUN set -eux; \
 	mkdir -p "$CASSANDRA_CONF" /var/lib/cassandra /var/log/cassandra; \
 	chown -R cassandra:cassandra "$CASSANDRA_CONF" /var/lib/cassandra /var/log/cassandra; \
 	chmod 777 "$CASSANDRA_CONF" /var/lib/cassandra /var/log/cassandra; \
+	chmod -R a+rwX "$CASSANDRA_CONF"; \
 	ln -sT /var/lib/cassandra "$CASSANDRA_HOME/data"; \
 	ln -sT /var/log/cassandra "$CASSANDRA_HOME/logs"; \
 	\
