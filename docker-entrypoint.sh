@@ -36,7 +36,9 @@ _sed-in-place() {
 	local tempFile
 	tempFile="$(mktemp)"
 	sed "$@" "$filename" > "$tempFile"
-	cat "$tempFile" > "$filename"
+	if diff -q "$filename" "$tempFile" &> /dev/null; then
+		cat "$tempFile" > "$filename"
+	fi
 	rm "$tempFile"
 }
 
