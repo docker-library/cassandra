@@ -63,16 +63,8 @@ if [ "$1" = 'cassandra' ]; then
 	_sed-in-place "$CASSANDRA_CONF/cassandra.yaml" \
 		-r 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/'
 
-	for yaml in \
-		broadcast_address \
-		broadcast_rpc_address \
-		cluster_name \
-		endpoint_snitch \
-		listen_address \
-		num_tokens \
-		rpc_address \
-		start_rpc \
-	; do
+	for yaml in $(cat /etc/cassandra/cassandra.yaml | egrep "^[a-z]" | cut -d: -f1);
+	do
 		var="CASSANDRA_${yaml^^}"
 		val="${!var}"
 		if [ "$val" ]; then
