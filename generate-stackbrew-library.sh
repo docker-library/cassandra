@@ -104,6 +104,9 @@ for version; do
 	# https://issues.apache.org/jira/browse/CASSANDRA-11054
 	arches="$(sed -r -e 's/ s390x / /g' <<<" $arches ")"
 
+	# riscv64 doesn't have a proper Java port yet
+	arches="$(sed -r -e 's/ riscv64 / /g' <<<" $arches ")"
+
 	arches="$(xargs -n1 <<<"$arches" | sort)"
 
 	commit="$(dirCommit "$version")"
