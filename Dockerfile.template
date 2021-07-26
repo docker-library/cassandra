@@ -63,15 +63,28 @@ ENV CASSANDRA_CONF /etc/cassandra
 ENV PATH $CASSANDRA_HOME/bin:$PATH
 
 # https://cwiki.apache.org/confluence/display/CASSANDRA2/DebianPackaging#DebianPackaging-AddingRepositoryKeys
+# $ docker run --rm buildpack-deps:buster-curl bash -c 'wget -qO- https://downloads.apache.org/cassandra/KEYS | gpg --batch --import &> /dev/null && gpg --batch --list-keys --with-fingerprint --with-colons' | awk -F: '$1 == "pub" && $2 == "-" { pub = 1 } pub && $1 == "fpr" { fpr = $10 } $1 == "sub" { pub = 0 } pub && fpr && $1 == "uid" && $2 == "-" { print "#", $10; print "\t" fpr " \\"; pub = 0 }'
 ENV GPG_KEYS \
-# gpg: key 0353B12C: public key "T Jake Luciani <jake@apache.org>" imported
+# Eric Evans <eevans@sym-link.com>
+	CEC86BB4A0BA9D0F90397CAEF8358FA2F2833C93 \
+# Eric Evans <eevans@sym-link.com>
+	C4965EE9E3015D192CCCF2B6F758CE318D77295D \
+# Sylvain Lebresne (pcmanus) <sylvain@datastax.com>
+	5AED1BF378E9A19DADE1BCB34BD736A82B5C1B00 \
+# T Jake Luciani <jake@apache.org>
 	514A2AD631A57A16DD0047EC749D6EEC0353B12C \
-# gpg: key FE4B2BDA: public key "Michael Shuler <michael@pbandjelly.org>" imported
+# Michael Shuler <michael@pbandjelly.org>
 	A26E528B271F19B9E5D8E19EA278B781FE4B2BDA \
-# gpg: key E91335D77E3E87CB: public key "Michael Semb Wever <mick@thelastpickle.com>" imported
+# Michael Semb Wever <mick@thelastpickle.com>
 	A4C465FEA0C552561A392A61E91335D77E3E87CB \
-# gpg: key F1000962B7F6840C: public key "Alex Petrov <oleksandr.petrov@gmail.com>" imported
-	9E66CEC6106D578D0B1EB9BFF1000962B7F6840C
+# Alex Petrov <oleksandr.petrov@gmail.com>
+	9E66CEC6106D578D0B1EB9BFF1000962B7F6840C \
+# Jordan West <jwest@apache.org>
+	C4009872C59B49561310D966D0062876AF30F054 \
+# Brandon Williams <brandonwilliams@apache.org>
+	B7842CDAF36E6A3214FAE35D5E85B9AE0B84C041 \
+# Ekaterina Buryanova Dimitrova (CODE SIGNING KEY) <e.dimitrova@gmail.com>
+	3E9C876907A560ACA00964F363E9BAD215BBF5F0
 
 ENV CASSANDRA_VERSION {{ .version }}
 ENV CASSANDRA_SHA512 {{ .sha512 }}
