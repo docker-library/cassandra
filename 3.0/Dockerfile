@@ -59,18 +59,6 @@ RUN set -eux; \
 ENV CASSANDRA_HOME /opt/cassandra
 ENV CASSANDRA_CONF /etc/cassandra
 ENV PATH $CASSANDRA_HOME/bin:$PATH
-
-# https://cwiki.apache.org/confluence/display/CASSANDRA2/DebianPackaging#DebianPackaging-AddingRepositoryKeys
-ENV GPG_KEYS \
-# gpg: key 0353B12C: public key "T Jake Luciani <jake@apache.org>" imported
-	514A2AD631A57A16DD0047EC749D6EEC0353B12C \
-# gpg: key FE4B2BDA: public key "Michael Shuler <michael@pbandjelly.org>" imported
-	A26E528B271F19B9E5D8E19EA278B781FE4B2BDA \
-# gpg: key E91335D77E3E87CB: public key "Michael Semb Wever <mick@thelastpickle.com>" imported
-	A4C465FEA0C552561A392A61E91335D77E3E87CB \
-# gpg: key F1000962B7F6840C: public key "Alex Petrov <oleksandr.petrov@gmail.com>" imported
-	9E66CEC6106D578D0B1EB9BFF1000962B7F6840C
-
 ENV CASSANDRA_VERSION 3.0.24
 ENV CASSANDRA_SHA512 e3e86890c0f8e08c1bf41aee0600ab12d4130109211a6e8146cfccbe08a003459cc2c64df6822a6ec1451de7391aa1ba00110925d105e48cc1ccdbefbdf71f14
 
@@ -106,9 +94,8 @@ RUN set -eux; \
 	\
 	ddist 'cassandra-bin.tgz.asc' "cassandra/$CASSANDRA_VERSION/apache-cassandra-$CASSANDRA_VERSION-bin.tar.gz.asc"; \
 	export GNUPGHOME="$(mktemp -d)"; \
-	for key in $GPG_KEYS; do \
-		gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key"; \
-	done; \
+# https://cwiki.apache.org/confluence/display/CASSANDRA2/DebianPackaging#DebianPackaging-AddingRepositoryKeys
+	curl -sSL https://www.apache.org/dist/cassandra/KEYS |gpg  --import -
 	gpg --batch --verify cassandra-bin.tgz.asc cassandra-bin.tgz; \
 	rm -rf "$GNUPGHOME"; \
 	\
