@@ -92,12 +92,6 @@ for version; do
 		arches="$(sed -r -e 's/ arm64v8 / /g' <<<" $arches ")"
 	fi
 
-	if [ "$version" = '2.1' ]; then
-		# 2.1 fails on arm32v7
-		# "A fatal error has been detected by the Java Runtime Environment: Internal Error (os_linux_zero.cpp:254), pid=1, tid=0xf7531460"
-		arches="$(sed -r -e 's/ arm32v[0-9]+ / /g' <<<" $arches ")"
-	fi
-
 	# s390x is not actually supported
 	# https://github.com/docker-library/cassandra/pull/116#issuecomment-326654542
 	# https://github.com/docker-library/cassandra/issues/193

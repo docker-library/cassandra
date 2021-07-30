@@ -3,7 +3,6 @@ set -Eeuo pipefail
 
 defaultJavaVersion='11'
 declare -A javaVersions=(
-	[2.1]='8'
 	[2.2]='8'
 	[3.0]='8'
 	[3.11]='8'
