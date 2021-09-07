@@ -2,7 +2,6 @@
 set -eu
 
 declare -A aliases=(
-	[2.2]='2'
 	[3.11]='3'
 	[4.0]='4 latest'
 )
@@ -84,13 +83,6 @@ for version; do
 
 	parent="$(awk 'toupper($1) == "FROM" { print $2 }' "$version/Dockerfile")"
 	arches="${parentRepoToArches[$parent]}"
-
-	if [ "$version" = '2.2' ]; then
-		# https://github.com/docker-library/cassandra/pull/116#issuecomment-326650640
-		# Exception (java.lang.RuntimeException) encountered during startup: java.lang.RuntimeException: java.util.concurrent.ExecutionException: java.lang.NoClassDefFoundError: Could not initialize class com.sun.jna.Native
-		# java.lang.RuntimeException: java.lang.RuntimeException: java.util.concurrent.ExecutionException: java.lang.NoClassDefFoundError: Could not initialize class com.sun.jna.Native
-		arches="$(sed -r -e 's/ arm64v8 / /g' <<<" $arches ")"
-	fi
 
 	# s390x is not actually supported
 	# https://github.com/docker-library/cassandra/pull/116#issuecomment-326654542
