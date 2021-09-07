@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM adoptopenjdk:11-jre-hotspot-focal
+FROM eclipse-temurin:11-jre-focal
 
 # explicitly set user/group IDs
 RUN set -eux; \
@@ -61,7 +61,7 @@ ENV CASSANDRA_CONF /etc/cassandra
 ENV PATH $CASSANDRA_HOME/bin:$PATH
 
 # https://cwiki.apache.org/confluence/display/CASSANDRA2/DebianPackaging#DebianPackaging-AddingRepositoryKeys
-# $ docker run --rm buildpack-deps:buster-curl bash -c 'wget -qO- https://downloads.apache.org/cassandra/KEYS | gpg --batch --import &> /dev/null && gpg --batch --list-keys --with-fingerprint --with-colons' | awk -F: '$1 == "pub" && $2 == "-" { pub = 1 } pub && $1 == "fpr" { fpr = $10 } $1 == "sub" { pub = 0 } pub && fpr && $1 == "uid" && $2 == "-" { print "#", $10; print "\t" fpr " \\"; pub = 0 }'
+# $ docker run --rm buildpack-deps:bullseye-curl bash -c 'wget -qO- https://downloads.apache.org/cassandra/KEYS | gpg --batch --import &> /dev/null && gpg --batch --list-keys --with-fingerprint --with-colons' | awk -F: '$1 == "pub" && $2 == "-" { pub = 1 } pub && $1 == "fpr" { fpr = $10 } $1 == "sub" { pub = 0 } pub && fpr && $1 == "uid" && $2 == "-" { print "#", $10; print "\t" fpr " \\"; pub = 0 }'
 ENV GPG_KEYS \
 # Eric Evans <eevans@sym-link.com>
 	CEC86BB4A0BA9D0F90397CAEF8358FA2F2833C93 \
@@ -82,7 +82,9 @@ ENV GPG_KEYS \
 # Brandon Williams <brandonwilliams@apache.org>
 	B7842CDAF36E6A3214FAE35D5E85B9AE0B84C041 \
 # Ekaterina Buryanova Dimitrova (CODE SIGNING KEY) <e.dimitrova@gmail.com>
-	3E9C876907A560ACA00964F363E9BAD215BBF5F0
+	3E9C876907A560ACA00964F363E9BAD215BBF5F0 \
+# Sam Tunnicliffe (CODE SIGNING KEY) <samt@apache.org>
+	F8B7FD00E05C932991A2CD6150EE103D162C5A55
 
 ENV CASSANDRA_VERSION 4.0.0
 ENV CASSANDRA_SHA512 94e923963531b97dbfcf90eb95e423abd9990fae02d1c9a90bf2d76ceb6cd9e422db628b9ec3a45994b3654f1f562f5df84718064722004ae8ba5b5abb11d0b6
