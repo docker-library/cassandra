@@ -40,6 +40,17 @@ _sed-in-place() {
 	rm "$tempFile"
 }
 
+_sed-in-place_ext() {
+        local filename="$1";
+        key="$2";
+        value="$3";
+        local tempFile
+        tempFile="$(mktemp)"
+        grep -q "$key" $filename && sed -r 's/^(# )?('"$key"':).*/\2 '"$value"'/' "$filename" > "$tempFile" || sed "$ a\\${key}: $value" "$filename" > "$tempFile"
+        cat "$tempFile" > "$filename"
+        rm "$tempFile"
+}
+
 if [ "$1" = 'cassandra' ]; then
 	: ${CASSANDRA_RPC_ADDRESS='0.0.0.0'}
 
@@ -80,6 +91,15 @@ if [ "$1" = 'cassandra' ]; then
 				-r 's/^(# )?('"$yaml"':).*/\2 '"$val"'/'
 		fi
 	done
+
+
+	for conf_yaml_var in "${!CASSANDRA_YML_@}"; do
+        conf_yaml_key="$(echo "${conf_yaml_var,,}" | sed -e 's/^cassandra_yml_//g')"
+        conf_yaml_val="${!conf_yaml_var}"
+        if [ "$conf_yaml_val" ]; then
+                _sed-in-place_ext "cassandra.yaml" "$conf_yaml_key" "$conf_yaml_val"
+        fi
+    done
 
 	for rackdc in dc rack; do
 		var="CASSANDRA_${rackdc^^}"
