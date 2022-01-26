@@ -97,7 +97,7 @@ if [ "$1" = 'cassandra' ]; then
         conf_yaml_key="$(echo "${conf_yaml_var,,}" | sed -e 's/^cassandra_yml_//g')"
         conf_yaml_val="${!conf_yaml_var}"
         if [ "$conf_yaml_val" ]; then
-                _sed-in-place_ext "cassandra.yaml" "$conf_yaml_key" "$conf_yaml_val"
+                _sed-in-place_ext "$CASSANDRA_CONF/cassandra.yaml" "$conf_yaml_key" "$conf_yaml_val"
         fi
     done
 
