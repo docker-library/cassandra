@@ -46,7 +46,7 @@ _sed-in-place_ext() {
         value="$3";
         local tempFile
         tempFile="$(mktemp)"
-        grep -q "$key" $filename && sed -r 's/^(# )?('"$key"':).*/\2 '"$value"'/' "$filename" > "$tempFile" || sed "$ a\\${key}: $value" "$filename" > "$tempFile"
+        egrep -q "^[#]{0,1}\s*?$key\s*?:" $filename && sed -r 's/^(# )?('"$key"':).*/\2 '"$value"'/' "$filename" > "$tempFile" || sed "$ a\\${key}: $value" "$filename" > "$tempFile"
         cat "$tempFile" > "$filename"
         rm "$tempFile"
 }
