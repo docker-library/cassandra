@@ -84,17 +84,6 @@ for version; do
 	parent="$(awk 'toupper($1) == "FROM" { print $2 }' "$version/Dockerfile")"
 	arches="${parentRepoToArches[$parent]}"
 
-	# s390x is not actually supported
-	# https://github.com/docker-library/cassandra/pull/116#issuecomment-326654542
-	# https://github.com/docker-library/cassandra/issues/193
-	# https://issues.apache.org/jira/browse/CASSANDRA-11054
-	arches="$(sed -r -e 's/ s390x / /g' <<<" $arches ")"
-
-	# riscv64 doesn't have a proper Java port yet
-	arches="$(sed -r -e 's/ riscv64 / /g' <<<" $arches ")"
-
-	arches="$(xargs -n1 <<<"$arches" | sort)"
-
 	commit="$(dirCommit "$version")"
 
 	echo
