@@ -144,16 +144,9 @@ RUN set -eux; \
 		ppc64el) \
 # https://issues.apache.org/jira/browse/CASSANDRA-13345
 # "The stack size specified is too small, Specify at least 328k"
-			if grep -q -- '^-Xss' "$CASSANDRA_CONF/jvm.options"; then \
-# 3.11+ (jvm.options)
-				grep -- '^-Xss256k$' "$CASSANDRA_CONF/jvm.options"; \
-				sed -ri 's/^-Xss256k$/-Xss512k/' "$CASSANDRA_CONF/jvm.options"; \
-				grep -- '^-Xss512k$' "$CASSANDRA_CONF/jvm.options"; \
-			elif grep -q -- '-Xss256k' "$CASSANDRA_CONF/cassandra-env.sh"; then \
-# 3.0 (cassandra-env.sh)
-				sed -ri 's/-Xss256k/-Xss512k/g' "$CASSANDRA_CONF/cassandra-env.sh"; \
-				grep -- '-Xss512k' "$CASSANDRA_CONF/cassandra-env.sh"; \
-			fi; \
+			grep -q -- '-Xss256k' "$CASSANDRA_CONF/cassandra-env.sh"; \
+			sed -ri 's/-Xss256k/-Xss512k/g' "$CASSANDRA_CONF/cassandra-env.sh"; \
+			grep -- '-Xss512k' "$CASSANDRA_CONF/cassandra-env.sh"; \
 			;; \
 	esac; \
 	\
