@@ -1,3 +1,6 @@
+{{
+	def major: env.version | split(".")[0] | tonumber
+-}}
 FROM eclipse-temurin:{{ .java }}-jre-focal
 
 # explicitly set user/group IDs
@@ -16,7 +19,7 @@ RUN set -eux; \
 {{
 	# python3 is only supported in 4.0+
 	# https://issues.apache.org/jira/browse/CASSANDRA-10190
-	if env.version | split(".") | .[0] | tonumber < 4 then (
+	if major < 4 then (
 -}}
 		python \
 {{ ) else ( -}}
@@ -146,16 +149,19 @@ RUN set -eux; \
 		ppc64el) \
 # https://issues.apache.org/jira/browse/CASSANDRA-13345
 # "The stack size specified is too small, Specify at least 328k"
-			if grep -q -- '^-Xss' "$CASSANDRA_CONF/jvm.options"; then \
-# 3.11+ (jvm.options)
-				grep -- '^-Xss256k$' "$CASSANDRA_CONF/jvm.options"; \
-				sed -ri 's/^-Xss256k$/-Xss512k/' "$CASSANDRA_CONF/jvm.options"; \
-				grep -- '^-Xss512k$' "$CASSANDRA_CONF/jvm.options"; \
-			elif grep -q -- '-Xss256k' "$CASSANDRA_CONF/cassandra-env.sh"; then \
-# 3.0 (cassandra-env.sh)
-				sed -ri 's/-Xss256k/-Xss512k/g' "$CASSANDRA_CONF/cassandra-env.sh"; \
-				grep -- '-Xss512k' "$CASSANDRA_CONF/cassandra-env.sh"; \
-			fi; \
+{{ if env.version == "3.0" then ( -}}
+			grep -q -- '-Xss256k' "$CASSANDRA_CONF/cassandra-env.sh"; \
+			sed -ri 's/-Xss256k/-Xss512k/g' "$CASSANDRA_CONF/cassandra-env.sh"; \
+			grep -- '-Xss512k' "$CASSANDRA_CONF/cassandra-env.sh"; \
+{{ ) elif major == 3 then ( -}}
+			grep -- '^-Xss256k$' "$CASSANDRA_CONF/jvm.options"; \
+			sed -ri 's/^-Xss256k$/-Xss512k/' "$CASSANDRA_CONF/jvm.options"; \
+			grep -- '^-Xss512k$' "$CASSANDRA_CONF/jvm.options"; \
+{{ ) else ( -}}
+			grep -- '^-Xss256k$' "$CASSANDRA_CONF/jvm-server.options"; \
+			sed -ri 's/^-Xss256k$/-Xss512k/' "$CASSANDRA_CONF/jvm-server.options"; \
+			grep -- '^-Xss512k$' "$CASSANDRA_CONF/jvm-server.options"; \
+{{ ) end -}}
 			;; \
 	esac; \
 	\
