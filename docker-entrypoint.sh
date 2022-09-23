@@ -89,6 +89,11 @@ if [ "$1" = 'cassandra' ]; then
 				-r 's/^('"$rackdc"'=).*/\1 '"$val"'/'
 		fi
 	done
+
+	if [ "$CASSANDRA_AUTHENTICATION" = 'true' ]; then
+		_sed-in-place "$CASSANDRA_CONF/cassandra.yaml" \
+			's/authenticator: AllowAllAuthenticator/authenticator: PasswordAuthenticator/g'
+	fi
 fi
 
 exec "$@"
