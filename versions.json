@@ -13,5 +13,10 @@
     "java": "11",
     "sha512": "07c2a2f018c5921bfe0d7afba877a23d0ac5bbda05b9414abc60b4fae761115d0fb650eb226247b66d62c450d7eeadc95b6e270ebf0339d8263222fe5d49b07b",
     "version": "4.0.6"
+  },
+  "4.1": {
+    "java": "11",
+    "sha512": "40f1b6877b1fcccdc5c6b6895e1c919bb4f17f119256bb600c4c749f9b6ca4f1e53341fde4bac9ddefc516d429b1d0909f359a87c5382dd0f3b3440ae3139084",
+    "version": "4.1-beta1"
   }
 }
