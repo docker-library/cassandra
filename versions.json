@@ -6,8 +6,8 @@
   },
   "3.11": {
     "java": "8",
-    "sha512": "d356a27a355797f490a36ef14f6e0062c0f77e180ca29debbaa8a92b073e8a922010ad91b911c2a075117d0399d712bda2ac90724430884dd1e3297b6c5e064d",
-    "version": "3.11.13"
+    "sha512": "04ee6fa283079e58c9e8eb36bafa8a56ac1373a8845cad55e6f23e508f8bb19955b7bc70ad571ee351bb580c87181c521beeaadce14adbd9d9c87e86c2d15ec2",
+    "version": "3.11.14"
   },
   "4.0": {
     "java": "11",
