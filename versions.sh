@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-defaultJavaVersion='11'
+# https://cassandra.apache.org/doc/5.0/cassandra/installing/installing.html#prerequisites
+# https://cassandra.apache.org/doc/4.1/cassandra/getting_started/installing.html#prerequisites
+# https://cassandra.apache.org/doc/3.11/cassandra/getting_started/installing.html#prerequisites
+defaultJavaVersion='17'
 declare -A javaVersions=(
 	[3.0]='8'
 	[3.11]='8'
+	[4.0]='11'
+	[4.1]='11'
 )
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
