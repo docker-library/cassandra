@@ -1,9 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -eu
 
 declare -A aliases=(
 	[3.11]='3'
 	[4.1]='4 latest'
+	[5.0]='5'
 )
 
 self="$(basename "$BASH_SOURCE")"
