@@ -82,6 +82,11 @@ for version; do
 	fi
 	versionAliases+=( ${aliases[$version]:-} )
 
+	suite="$(jq -r '.[env.version].FROM.base' versions.json)"
+	suiteAliases=( "${versionAliases[@]/%/-$suite}" )
+	suiteAliases=( "${suiteAliases[@]//latest-/}" )
+	versionAliases+=( "${suiteAliases[@]}" )
+
 	parent="$(awk 'toupper($1) == "FROM" { print $2 }' "$version/Dockerfile")"
 	arches="${parentRepoToArches[$parent]}"
 

@@ -1,7 +1,7 @@
 {{
 	def major: env.version | split(".")[0] | tonumber
 -}}
-FROM eclipse-temurin:{{ .java }}-jre-focal
+FROM {{ .FROM.version }}
 
 # explicitly set user/group IDs
 RUN set -eux; \
