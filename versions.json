@@ -39,8 +39,8 @@
       "version": "11"
     },
     "FROM": {
-      "version": "eclipse-temurin:11-jre-focal",
-      "base": "focal"
+      "version": "eclipse-temurin:11-jre-jammy",
+      "base": "jammy"
     }
   },
   "5.0": {
