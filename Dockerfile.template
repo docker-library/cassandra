@@ -19,9 +19,12 @@ RUN set -eux; \
 {{
 	# python3 is only supported in 4.0+
 	# https://issues.apache.org/jira/browse/CASSANDRA-10190
+	# https://github.com/apache/cassandra/blob/cassandra-3.11.16/bin/cqlsh#L18-L26
+	# https://github.com/apache/cassandra/blob/cassandra-3.0.29/bin/cqlsh#L18-L26
+	# (only looking for/accepting Python 2.7 specifically)
 	if major < 4 then (
 -}}
-		python \
+		python2 \
 {{ ) else ( -}}
 		python3 \
 {{ ) end -}}
