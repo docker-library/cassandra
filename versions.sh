@@ -50,15 +50,30 @@ for version in "${versions[@]}"; do
 
 	export javaVersion="${javaVersions[$version]:-$defaultJavaVersion}"
 
-	echo "$version: $fullVersion"
+	# for the given Java version, find the "default" Eclipse Temurin tag with stable specificity ("X-jre-SUITE")
+	from="$(
+		bashbrew --arch amd64 list --arch-filter "https://github.com/docker-library/official-images/raw/HEAD/library/eclipse-temurin:$javaVersion-jre" \
+			| grep -F ":$javaVersion-jre-" \
+			| tail -1
+	)"
+	export from
+
+	echo "$version: $fullVersion (FROM $from)"
 
 	json="$(jq <<<"$json" -c '
 		.[env.version] = {
 			version: env.fullVersion,
 			sha512: env.sha512,
-			java: env.javaVersion,
+			java: {
+				version: env.javaVersion,
+			},
+			FROM: {
+				# this structure is a little bit awkward, but gives us nice commit messages like "Update 5.0 to FROM eclipse-temurin:17-jre-jammy"
+				version: env.from,
+				base: (env.from | split(":\(env.javaVersion)-jre-")[1]),
+			},
 		}
 	')"
 done
 
-jq <<<"$json" -S . > versions.json
+jq <<<"$json" . > versions.json

@@ -1,27 +1,57 @@
 {
   "3.0": {
-    "java": "8",
+    "version": "3.0.29",
     "sha512": "31515e20fb1356ae8cf277c52954ea711c4e158f852cd8bee096775f1f0a2b6847fe972d4755f061b45578f7ed688237b8ead84b38c77bcccfd6f8c022db520b",
-    "version": "3.0.29"
+    "java": {
+      "version": "8"
+    },
+    "FROM": {
+      "version": "eclipse-temurin:8-jre-focal",
+      "base": "focal"
+    }
   },
   "3.11": {
-    "java": "8",
+    "version": "3.11.16",
     "sha512": "5bc76508fec8ff9d4fcfa3c53b0c9550ef37ad771e568b2634df2ba5377c378237c968f1d2bfb1078ecc30c034aea63b4c481826bb9ac26536f1f4f336cd8286",
-    "version": "3.11.16"
+    "java": {
+      "version": "8"
+    },
+    "FROM": {
+      "version": "eclipse-temurin:8-jre-focal",
+      "base": "focal"
+    }
   },
   "4.0": {
-    "java": "11",
+    "version": "4.0.11",
     "sha512": "92bd35819e86927709add1075023af5aed93d42e0115bfa6b675b15e93b31bffa6fd3b9ff95a403bb9650ec417a0567ac776c88b56fe373938451746bbc64a50",
-    "version": "4.0.11"
+    "java": {
+      "version": "11"
+    },
+    "FROM": {
+      "version": "eclipse-temurin:11-jre-focal",
+      "base": "focal"
+    }
   },
   "4.1": {
-    "java": "11",
+    "version": "4.1.3",
     "sha512": "393443a5b9849645362df2f7536e734e1fc6d513aadf440fab8dda3063553394a138805098796d35f9d4d31e2899ecab630a2ec2a44d00d5e63bed549a2e844c",
-    "version": "4.1.3"
+    "java": {
+      "version": "11"
+    },
+    "FROM": {
+      "version": "eclipse-temurin:11-jre-focal",
+      "base": "focal"
+    }
   },
   "5.0": {
-    "java": "17",
+    "version": "5.0-beta1",
     "sha512": "d67aa211858f090dca6ea2ac84ed405bd4791aaf493e3c8e5b24fd44e54aa3132eeca3f4e310d6d1aad1ca105515011d6e177d169a6e94af0a257ffc95b4f175",
-    "version": "5.0-beta1"
+    "java": {
+      "version": "17"
+    },
+    "FROM": {
+      "version": "eclipse-temurin:17-jre-focal",
+      "base": "focal"
+    }
   }
 }
