@@ -6,8 +6,8 @@
       "version": "8"
     },
     "FROM": {
-      "version": "eclipse-temurin:8-jre-focal",
-      "base": "focal"
+      "version": "eclipse-temurin:8-jre-jammy",
+      "base": "jammy"
     }
   },
   "3.11": {
