@@ -33,8 +33,8 @@
     }
   },
   "4.1": {
-    "version": "4.1.3",
-    "sha512": "393443a5b9849645362df2f7536e734e1fc6d513aadf440fab8dda3063553394a138805098796d35f9d4d31e2899ecab630a2ec2a44d00d5e63bed549a2e844c",
+    "version": "4.1.4",
+    "sha512": "ddc9f4157a6e272b421850c7787b822bae36c72ab2dce711a91dc24fe18bf56f2cd91c61410243cdc0eeeb5f2a7e5419f8a531863116026996bd3f167c36a916",
     "java": {
       "version": "11"
     },
