@@ -11,6 +11,19 @@ declare -A javaVersions=(
 	[4.0]='11'
 	[4.1]='11'
 )
+declare -A suiteOverrides=(
+	# see notes about python2 vs python3 in Dockerfile.template (noble does not have python2)
+	[3.0]='jammy'
+	[3.11]='jammy'
+	# https://issues.apache.org/jira/browse/CASSANDRA-19206: "cqlsh breaks with Python 3.12" ("ModuleNotFoundError: No module named 'six.moves'")
+	[4.0]='jammy'
+	[4.1]='jammy'
+	# "Warning: unsupported version of Python, required 3.6-3.11 but found 3.12"
+	# https://github.com/apache/cassandra/commit/8fd44ca8fc9e0b0e94932bcd855e2833bf6ca3cb#diff-8d8ae48aaf489a8a0e726d3e4a6230a26dcc76e7c739e8e3968e3f65c995d148
+	# https://issues.apache.org/jira/browse/CASSANDRA-19245?focusedCommentId=17803539#comment-17803539
+	# https://github.com/apache/cassandra/blob/cassandra-5.0-rc1/bin/cqlsh#L65
+	[5.0]='jammy'
+)
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
@@ -49,10 +62,11 @@ for version in "${versions[@]}"; do
 	export fullVersion sha512
 
 	export javaVersion="${javaVersions[$version]:-$defaultJavaVersion}"
+	suiteOverride="${suiteOverrides[$version]:-}"
 
 	# for the given Java version, find the "default" Eclipse Temurin tag with stable specificity ("X-jre-SUITE")
 	from="$(
-		bashbrew --arch amd64 list --arch-filter "https://github.com/docker-library/official-images/raw/HEAD/library/eclipse-temurin:$javaVersion-jre" \
+		bashbrew --arch amd64 list --arch-filter "https://github.com/docker-library/official-images/raw/HEAD/library/eclipse-temurin:$javaVersion-jre${suiteOverride:+-$suiteOverride}" \
 			| grep -F ":$javaVersion-jre-" \
 			| tail -1
 	)"
