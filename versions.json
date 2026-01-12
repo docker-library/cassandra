@@ -1,26 +1,4 @@
 {
-  "3.0": {
-    "version": "3.0.32",
-    "sha512": "26043c329bc4c179bc50c2d7bd59e85292bfc8ed2af6502b636fe2fc583d32678649a69a2b0bdc6ff1f2798f7c4fd7fd84a7714d25c2e6172ab5cd1ae2d5d05c",
-    "java": {
-      "version": "8"
-    },
-    "FROM": {
-      "version": "eclipse-temurin:8-jre-jammy",
-      "base": "jammy"
-    }
-  },
-  "3.11": {
-    "version": "3.11.19",
-    "sha512": "42d7732c2b81c65a960101d1146603d430de341adcdf8d0ffc649753a340cf64dad696050f2ec01faff5f15e726f4f2a459f0b3ac281569b957f7726f51d43e0",
-    "java": {
-      "version": "8"
-    },
-    "FROM": {
-      "version": "eclipse-temurin:8-jre-jammy",
-      "base": "jammy"
-    }
-  },
   "4.0": {
     "version": "4.0.19",
     "sha512": "2b12b97ebe2be27a468397ab58006708a474d53d3cf636de7405cce404cbffad2194e72de85e5d60a9f4d9626cbdfc7d06588a0cea037e34497f0aa1edc80e44",
