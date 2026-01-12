@@ -3,25 +3,19 @@ set -Eeuo pipefail
 
 # https://cassandra.apache.org/doc/5.0/cassandra/installing/installing.html#prerequisites
 # https://cassandra.apache.org/doc/4.1/cassandra/getting_started/installing.html#prerequisites
-# https://cassandra.apache.org/doc/3.11/cassandra/getting_started/installing.html#prerequisites
 defaultJavaVersion='17'
 declare -A javaVersions=(
-	[3.0]='8'
-	[3.11]='8'
 	[4.0]='11'
 	[4.1]='11'
 )
 declare -A suiteOverrides=(
-	# see notes about python2 vs python3 in Dockerfile.template (noble does not have python2)
-	[3.0]='jammy'
-	[3.11]='jammy'
 	# https://issues.apache.org/jira/browse/CASSANDRA-19206: "cqlsh breaks with Python 3.12" ("ModuleNotFoundError: No module named 'six.moves'")
 	[4.0]='jammy'
 	[4.1]='jammy'
 	# "Warning: unsupported version of Python, required 3.6-3.11 but found 3.12"
 	# https://github.com/apache/cassandra/commit/8fd44ca8fc9e0b0e94932bcd855e2833bf6ca3cb#diff-8d8ae48aaf489a8a0e726d3e4a6230a26dcc76e7c739e8e3968e3f65c995d148
 	# https://issues.apache.org/jira/browse/CASSANDRA-19245?focusedCommentId=17803539#comment-17803539
-	# https://github.com/apache/cassandra/blob/cassandra-5.0-rc1/bin/cqlsh#L65
+	# https://github.com/apache/cassandra/blob/cassandra-5.0.6/bin/cqlsh#L65
 	[5.0]='jammy'
 )
 
