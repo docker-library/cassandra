@@ -3,20 +3,22 @@ set -Eeuo pipefail
 
 # https://cassandra.apache.org/doc/5.0/cassandra/installing/installing.html#prerequisites
 # https://cassandra.apache.org/doc/4.1/cassandra/getting_started/installing.html#prerequisites
+# https://github.com/apache/cassandra/blob/cassandra-5.0.6/build.xml#L48
 defaultJavaVersion='17'
 declare -A javaVersions=(
-	[4.0]='11'
-	[4.1]='11'
+	[4.0]='11' # https://github.com/apache/cassandra/blob/cassandra-4.0.19/build.xml#L212-L221
+	[4.1]='11' # https://github.com/apache/cassandra/blob/cassandra-4.1.10/build.xml#L227-L236
 )
-declare -A suiteOverrides=(
+defaultSuite='trixie'
+declare -A suites=(
 	# https://issues.apache.org/jira/browse/CASSANDRA-19206: "cqlsh breaks with Python 3.12" ("ModuleNotFoundError: No module named 'six.moves'")
-	[4.0]='jammy'
-	[4.1]='jammy'
+	[4.0]='bookworm'
+	[4.1]='bookworm'
 	# "Warning: unsupported version of Python, required 3.6-3.11 but found 3.12"
 	# https://github.com/apache/cassandra/commit/8fd44ca8fc9e0b0e94932bcd855e2833bf6ca3cb#diff-8d8ae48aaf489a8a0e726d3e4a6230a26dcc76e7c739e8e3968e3f65c995d148
 	# https://issues.apache.org/jira/browse/CASSANDRA-19245?focusedCommentId=17803539#comment-17803539
 	# https://github.com/apache/cassandra/blob/cassandra-5.0.6/bin/cqlsh#L65
-	[5.0]='jammy'
+	[5.0]='bookworm'
 )
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
@@ -55,18 +57,10 @@ for version in "${versions[@]}"; do
 	fi
 	export fullVersion sha512
 
-	export javaVersion="${javaVersions[$version]:-$defaultJavaVersion}"
-	suiteOverride="${suiteOverrides[$version]:-}"
+	export javaVersion="${javaVersions[$version]:-$defaultJavaVersion}" # TODO scrape this from build.xml upstream directly?
+	export suite="${suites[$version]:-$defaultSuite}"
 
-	# for the given Java version, find the "default" Eclipse Temurin tag with stable specificity ("X-jre-SUITE")
-	from="$(
-		bashbrew --arch amd64 list --arch-filter "https://github.com/docker-library/official-images/raw/HEAD/library/eclipse-temurin:$javaVersion-jre${suiteOverride:+-$suiteOverride}" \
-			| grep -F ":$javaVersion-jre-" \
-			| tail -1
-	)"
-	export from
-
-	echo "$version: $fullVersion (FROM $from)"
+	echo "$version: $fullVersion"
 
 	json="$(jq <<<"$json" -c '
 		.[env.version] = {
@@ -75,10 +69,8 @@ for version in "${versions[@]}"; do
 			java: {
 				version: env.javaVersion,
 			},
-			FROM: {
-				# this structure is a little bit awkward, but gives us nice commit messages like "Update 5.0 to FROM eclipse-temurin:17-jre-jammy"
-				version: env.from,
-				base: (env.from | split(":\(env.javaVersion)-jre-")[1]),
+			debian: {
+				version: env.suite,
 			},
 		}
 	')"

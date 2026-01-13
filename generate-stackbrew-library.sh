@@ -39,18 +39,36 @@ dirCommit() {
 	)
 }
 
+gawkParents='
+	{ cmd = toupper($1) }
+	cmd == "FROM" {
+		print $2
+		next
+	}
+	cmd == "COPY" {
+		for (i = 2; i < NF; i++) {
+			if ($i ~ /^--from=/) {
+				gsub(/^--from=/, "", $i)
+				print $i
+				next
+			}
+		}
+	}
+'
+
 getArches() {
 	local repo="$1"; shift
 	local officialImagesBase="${BASHBREW_LIBRARY:-https://github.com/docker-library/official-images/raw/HEAD/library}/"
 
 	local parentRepoToArchesStr
 	parentRepoToArchesStr="$(
-		find -name 'Dockerfile' -exec awk -v officialImagesBase="$officialImagesBase" '
-				toupper($1) == "FROM" && $2 !~ /^('"$repo"'|scratch|.*\/.*)(:|$)/ {
-					printf "%s%s\n", officialImagesBase, $2
-				}
-			' '{}' + \
+		find -name 'Dockerfile' -exec gawk "$gawkParents" '{}' + \
 			| sort -u \
+			| gawk -v officialImagesBase="$officialImagesBase" '
+				$1 !~ /^('"$repo"'|scratch|.*\/.*)(:|$)/ {
+					printf "%s%s\n", officialImagesBase, $1
+				}
+			' \
 			| xargs -r bashbrew cat --format '["{{ .RepoName }}:{{ .TagName }}"]="{{ join " " .TagEntry.Architectures }}"'
 	)"
 	eval "declare -g -A parentRepoToArches=( $parentRepoToArchesStr )"
@@ -83,13 +101,27 @@ for version; do
 	fi
 	versionAliases+=( ${aliases[$version]:-} )
 
-	suite="$(jq -r '.[env.version].FROM.base' versions.json)"
+	suite="$(jq -r '.[env.version].debian.version' versions.json)"
 	suiteAliases=( "${versionAliases[@]/%/-$suite}" )
 	suiteAliases=( "${suiteAliases[@]//latest-/}" )
 	versionAliases+=( "${suiteAliases[@]}" )
 
-	parent="$(awk 'toupper($1) == "FROM" { print $2 }' "$version/Dockerfile")"
-	arches="${parentRepoToArches[$parent]}"
+	parents="$(gawk "$gawkParents" "$version/Dockerfile")"
+	arches=
+	for parent in $parents; do
+		parentArches="${parentRepoToArches[$parent]:-}"
+		if [ -z "$parentArches" ]; then
+			continue
+		elif [ -z "$arches" ]; then
+			arches="$parentArches"
+		else
+			arches="$(
+				comm -12 \
+					<(xargs -n1 <<<"$arches" | sort -u) \
+					<(xargs -n1 <<<"$parentArches" | sort -u)
+			)"
+		fi
+	done
 
 	commit="$(dirCommit "$version")"
 

@@ -5,9 +5,8 @@
     "java": {
       "version": "11"
     },
-    "FROM": {
-      "version": "eclipse-temurin:11-jre-jammy",
-      "base": "jammy"
+    "debian": {
+      "version": "bookworm"
     }
   },
   "4.1": {
@@ -16,9 +15,8 @@
     "java": {
       "version": "11"
     },
-    "FROM": {
-      "version": "eclipse-temurin:11-jre-jammy",
-      "base": "jammy"
+    "debian": {
+      "version": "bookworm"
     }
   },
   "5.0": {
@@ -27,9 +25,8 @@
     "java": {
       "version": "17"
     },
-    "FROM": {
-      "version": "eclipse-temurin:17-jre-jammy",
-      "base": "jammy"
+    "debian": {
+      "version": "bookworm"
     }
   }
 }

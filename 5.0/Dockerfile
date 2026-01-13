@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM eclipse-temurin:17-jre-jammy
+FROM debian:bookworm-slim
 
 # explicitly set user/group IDs
 RUN set -eux; \
@@ -55,6 +55,11 @@ RUN set -eux; \
 	chmod +x /usr/local/bin/gosu; \
 	gosu --version; \
 	gosu nobody true
+
+ENV JAVA_HOME /opt/java/openjdk
+COPY --from=eclipse-temurin:17-jre $JAVA_HOME $JAVA_HOME
+ENV PATH $JAVA_HOME/bin:$PATH
+RUN java --version
 
 ENV CASSANDRA_HOME /opt/cassandra
 ENV CASSANDRA_CONF /etc/cassandra
