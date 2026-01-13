@@ -159,9 +159,6 @@ RUN set -eux; \
 VOLUME /var/lib/cassandra
 
 COPY docker-entrypoint.sh /usr/local/bin/
-{{ if env.version | split(".") | .[0] | tonumber < 4 then ( -}}
-RUN ln -s usr/local/bin/docker-entrypoint.sh /docker-entrypoint.sh # backwards compat
-{{ ) else "" end -}}
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 # 7000: intra-node communication
