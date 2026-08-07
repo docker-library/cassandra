@@ -1,7 +1,7 @@
 {
   "4.0": {
-    "version": "4.0.20",
-    "sha512": "4abd74a1a488360d94ee3bca905c7095cac2e3328577e46622aa41144b1a612844af79ba5ec3e98b26d08fee168511fac128bc6ea2eb2026f981d72bfdeb9fdb",
+    "version": "4.0.21",
+    "sha512": "4135fe4302fbd84a215b9d70daeca9c2fef1cfb5d5f6f198ecc57e258743c50a526cc6bc9e4a04e93239412483c1ba146e67e161d0037c40ed7740561b1551ef",
     "java": {
       "version": "11"
     },
