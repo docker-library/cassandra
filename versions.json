@@ -26,7 +26,17 @@
       "version": "17"
     },
     "debian": {
-      "version": "bookworm"
+      "version": "trixie"
+    }
+  },
+  "6.0": {
+    "version": "6.0-alpha2",
+    "sha512": "64577a7e48068f6602396370765898364712cf22c95632c11e216b729c3db3e1eefe5d74ba173dd18a995b9c3964af455c0ca8bdecd3975120f3521754985734",
+    "java": {
+      "version": "21"
+    },
+    "debian": {
+      "version": "trixie"
     }
   }
 }
