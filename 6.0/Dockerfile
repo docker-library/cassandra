@@ -57,7 +57,7 @@ RUN set -eux; \
 	gosu nobody true
 
 ENV JAVA_HOME /opt/java/openjdk
-COPY --from=eclipse-temurin:17-jre $JAVA_HOME $JAVA_HOME
+COPY --from=eclipse-temurin:21-jre $JAVA_HOME $JAVA_HOME
 ENV PATH $JAVA_HOME/bin:$PATH
 RUN java --version
 
@@ -95,8 +95,8 @@ ENV GPG_KEYS \
 # Berenguer Blasi (Code Signing Key) <bereng@apache.org>
 	CEC5C50B9C629EF0F5AB2706650B72EB14CCD622
 
-ENV CASSANDRA_VERSION 5.0.9
-ENV CASSANDRA_SHA512 beaf3df6342ef1a0ccc83fa80214f250b32c35cfbb1af591b00e3fd539eef0915bc3b89f0e7ae73f6d50cbb03f6075c4e4cf32d3c46ff9c33f745542fcc925df
+ENV CASSANDRA_VERSION 6.0-alpha2
+ENV CASSANDRA_SHA512 64577a7e48068f6602396370765898364712cf22c95632c11e216b729c3db3e1eefe5d74ba173dd18a995b9c3964af455c0ca8bdecd3975120f3521754985734
 
 RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
